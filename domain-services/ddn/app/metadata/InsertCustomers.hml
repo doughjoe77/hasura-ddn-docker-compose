@@ -1,0 +1,120 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: InsertCustomersObject
+  fields:
+    - name: email
+      type: String_1
+    - name: firstName
+      type: String_1
+    - name: id
+      type: Uuid!
+    - name: lastName
+      type: String_1
+  graphql:
+    typeName: InsertCustomersObject
+    inputTypeName: InsertCustomersObjectInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: insert_customers_object
+      fieldMapping:
+        email:
+          column:
+            name: email
+        firstName:
+          column:
+            name: first_name
+        id:
+          column:
+            name: id
+        lastName:
+          column:
+            name: last_name
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: InsertCustomersObject
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - email
+          - firstName
+          - id
+          - lastName
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: InsertCustomersResponse
+  description: Responses from the 'insert_customers' procedure
+  fields:
+    - name: affectedRows
+      type: Int32!
+      description: The number of rows affected by the mutation
+    - name: returning
+      type: "[Customers!]!"
+      description: Data from rows affected by the mutation
+  graphql:
+    typeName: InsertCustomersResponse
+    inputTypeName: InsertCustomersResponseInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: insert_customers_response
+      fieldMapping:
+        affectedRows:
+          column:
+            name: affected_rows
+        returning:
+          column:
+            name: returning
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: InsertCustomersResponse
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - affectedRows
+          - returning
+
+---
+kind: Command
+version: v1
+definition:
+  name: InsertCustomers
+  outputType: InsertCustomersResponse!
+  arguments:
+    - name: objects
+      type: "[InsertCustomersObject!]!"
+    - name: postCheck
+      type: CustomersBoolExp
+      description: Insert permission predicate over the 'customers' collection
+  source:
+    dataConnectorName: my_pg
+    dataConnectorCommand:
+      procedure: insert_customers
+    argumentMapping:
+      objects: objects
+      postCheck: post_check
+  graphql:
+    rootFieldName: insertCustomers
+    rootFieldKind: Mutation
+  description: Insert into the customers table
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: InsertCustomers
+  permissions:
+    - role: admin
+      allowExecution: true
+

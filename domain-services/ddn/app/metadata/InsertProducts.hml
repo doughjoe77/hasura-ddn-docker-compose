@@ -1,0 +1,107 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: InsertProductsObject
+  fields:
+    - name: id
+      type: Uuid!
+    - name: name
+      type: String_1
+    - name: price
+      type: Bigdecimal
+    - name: stock
+      type: Int32
+  graphql:
+    typeName: InsertProductsObject
+    inputTypeName: InsertProductsObjectInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: insert_products_object
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: InsertProductsObject
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - id
+          - name
+          - price
+          - stock
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: InsertProductsResponse
+  description: Responses from the 'insert_products' procedure
+  fields:
+    - name: affectedRows
+      type: Int32!
+      description: The number of rows affected by the mutation
+    - name: returning
+      type: "[Products!]!"
+      description: Data from rows affected by the mutation
+  graphql:
+    typeName: InsertProductsResponse
+    inputTypeName: InsertProductsResponseInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: insert_products_response
+      fieldMapping:
+        affectedRows:
+          column:
+            name: affected_rows
+        returning:
+          column:
+            name: returning
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: InsertProductsResponse
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - affectedRows
+          - returning
+
+---
+kind: Command
+version: v1
+definition:
+  name: InsertProducts
+  outputType: InsertProductsResponse!
+  arguments:
+    - name: objects
+      type: "[InsertProductsObject!]!"
+    - name: postCheck
+      type: ProductsBoolExp
+      description: Insert permission predicate over the 'products' collection
+  source:
+    dataConnectorName: my_pg
+    dataConnectorCommand:
+      procedure: insert_products
+    argumentMapping:
+      objects: objects
+      postCheck: post_check
+  graphql:
+    rootFieldName: insertProducts
+    rootFieldKind: Mutation
+  description: Insert into the products table
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: InsertProducts
+  permissions:
+    - role: admin
+      allowExecution: true
+

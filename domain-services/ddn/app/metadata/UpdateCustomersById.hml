@@ -1,0 +1,261 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateColumnCustomersEmail
+  description: Update the 'email' column in the 'customers' collection
+  fields:
+    - name: set
+      type: String_1
+      description: Set the column to this value
+  graphql:
+    typeName: UpdateColumnCustomersEmail
+    inputTypeName: UpdateColumnCustomersEmailInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_column_customers_email
+      fieldMapping:
+        set:
+          column:
+            name: _set
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateColumnCustomersEmail
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - set
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateColumnCustomersFirstName
+  description: Update the 'first_name' column in the 'customers' collection
+  fields:
+    - name: set
+      type: String_1
+      description: Set the column to this value
+  graphql:
+    typeName: UpdateColumnCustomersFirstName
+    inputTypeName: UpdateColumnCustomersFirstNameInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_column_customers_first_name
+      fieldMapping:
+        set:
+          column:
+            name: _set
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateColumnCustomersFirstName
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - set
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateColumnCustomersId
+  description: Update the 'id' column in the 'customers' collection
+  fields:
+    - name: set
+      type: Uuid!
+      description: Set the column to this value
+  graphql:
+    typeName: UpdateColumnCustomersId
+    inputTypeName: UpdateColumnCustomersIdInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_column_customers_id
+      fieldMapping:
+        set:
+          column:
+            name: _set
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateColumnCustomersId
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - set
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateColumnCustomersLastName
+  description: Update the 'last_name' column in the 'customers' collection
+  fields:
+    - name: set
+      type: String_1
+      description: Set the column to this value
+  graphql:
+    typeName: UpdateColumnCustomersLastName
+    inputTypeName: UpdateColumnCustomersLastNameInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_column_customers_last_name
+      fieldMapping:
+        set:
+          column:
+            name: _set
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateColumnCustomersLastName
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - set
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateCustomersByIdUpdateColumns
+  description: Update the columns of the 'customers' collection
+  fields:
+    - name: email
+      type: UpdateColumnCustomersEmail
+      description: Update the 'email' column in the 'customers' collection.
+    - name: firstName
+      type: UpdateColumnCustomersFirstName
+      description: Update the 'first_name' column in the 'customers' collection.
+    - name: id
+      type: UpdateColumnCustomersId
+      description: Update the 'id' column in the 'customers' collection.
+    - name: lastName
+      type: UpdateColumnCustomersLastName
+      description: Update the 'last_name' column in the 'customers' collection.
+  graphql:
+    typeName: UpdateCustomersByIdUpdateColumns
+    inputTypeName: UpdateCustomersByIdUpdateColumnsInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_customers_by_id_update_columns
+      fieldMapping:
+        email:
+          column:
+            name: email
+        firstName:
+          column:
+            name: first_name
+        id:
+          column:
+            name: id
+        lastName:
+          column:
+            name: last_name
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateCustomersByIdUpdateColumns
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - email
+          - firstName
+          - id
+          - lastName
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateCustomersByIdResponse
+  description: Responses from the 'update_customers_by_id' procedure
+  fields:
+    - name: affectedRows
+      type: Int32!
+      description: The number of rows affected by the mutation
+    - name: returning
+      type: "[Customers!]!"
+      description: Data from rows affected by the mutation
+  graphql:
+    typeName: UpdateCustomersByIdResponse
+    inputTypeName: UpdateCustomersByIdResponseInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_customers_by_id_response
+      fieldMapping:
+        affectedRows:
+          column:
+            name: affected_rows
+        returning:
+          column:
+            name: returning
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateCustomersByIdResponse
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - affectedRows
+          - returning
+
+---
+kind: Command
+version: v1
+definition:
+  name: UpdateCustomersById
+  outputType: UpdateCustomersByIdResponse!
+  arguments:
+    - name: keyId
+      type: Uuid!
+    - name: postCheck
+      type: CustomersBoolExp
+      description: Update permission post-condition predicate over the 'customers'
+        collection
+    - name: preCheck
+      type: CustomersBoolExp
+      description: Update permission pre-condition predicate over the 'customers' collection
+    - name: updateColumns
+      type: UpdateCustomersByIdUpdateColumns!
+  source:
+    dataConnectorName: my_pg
+    dataConnectorCommand:
+      procedure: update_customers_by_id
+    argumentMapping:
+      keyId: key_id
+      postCheck: post_check
+      preCheck: pre_check
+      updateColumns: update_columns
+  graphql:
+    rootFieldName: updateCustomersById
+    rootFieldKind: Mutation
+  description: Update any row on the 'customers' collection using the 'id' key
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: UpdateCustomersById
+  permissions:
+    - role: admin
+      allowExecution: true
+

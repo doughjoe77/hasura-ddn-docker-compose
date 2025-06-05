@@ -1,0 +1,260 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateColumnOrdersCustomerId
+  description: Update the 'customer_id' column in the 'orders' collection
+  fields:
+    - name: set
+      type: Uuid
+      description: Set the column to this value
+  graphql:
+    typeName: UpdateColumnOrdersCustomerId
+    inputTypeName: UpdateColumnOrdersCustomerIdInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_column_orders_customer_id
+      fieldMapping:
+        set:
+          column:
+            name: _set
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateColumnOrdersCustomerId
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - set
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateColumnOrdersId
+  description: Update the 'id' column in the 'orders' collection
+  fields:
+    - name: set
+      type: Uuid!
+      description: Set the column to this value
+  graphql:
+    typeName: UpdateColumnOrdersId
+    inputTypeName: UpdateColumnOrdersIdInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_column_orders_id
+      fieldMapping:
+        set:
+          column:
+            name: _set
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateColumnOrdersId
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - set
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateColumnOrdersOrderDate
+  description: Update the 'order_date' column in the 'orders' collection
+  fields:
+    - name: set
+      type: Date
+      description: Set the column to this value
+  graphql:
+    typeName: UpdateColumnOrdersOrderDate
+    inputTypeName: UpdateColumnOrdersOrderDateInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_column_orders_order_date
+      fieldMapping:
+        set:
+          column:
+            name: _set
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateColumnOrdersOrderDate
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - set
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateColumnOrdersTotalAmount
+  description: Update the 'total_amount' column in the 'orders' collection
+  fields:
+    - name: set
+      type: Bigdecimal
+      description: Set the column to this value
+  graphql:
+    typeName: UpdateColumnOrdersTotalAmount
+    inputTypeName: UpdateColumnOrdersTotalAmountInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_column_orders_total_amount
+      fieldMapping:
+        set:
+          column:
+            name: _set
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateColumnOrdersTotalAmount
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - set
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateOrdersByIdUpdateColumns
+  description: Update the columns of the 'orders' collection
+  fields:
+    - name: customerId
+      type: UpdateColumnOrdersCustomerId
+      description: Update the 'customer_id' column in the 'orders' collection.
+    - name: id
+      type: UpdateColumnOrdersId
+      description: Update the 'id' column in the 'orders' collection.
+    - name: orderDate
+      type: UpdateColumnOrdersOrderDate
+      description: Update the 'order_date' column in the 'orders' collection.
+    - name: totalAmount
+      type: UpdateColumnOrdersTotalAmount
+      description: Update the 'total_amount' column in the 'orders' collection.
+  graphql:
+    typeName: UpdateOrdersByIdUpdateColumns
+    inputTypeName: UpdateOrdersByIdUpdateColumnsInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_orders_by_id_update_columns
+      fieldMapping:
+        customerId:
+          column:
+            name: customer_id
+        id:
+          column:
+            name: id
+        orderDate:
+          column:
+            name: order_date
+        totalAmount:
+          column:
+            name: total_amount
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateOrdersByIdUpdateColumns
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - customerId
+          - id
+          - orderDate
+          - totalAmount
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: UpdateOrdersByIdResponse
+  description: Responses from the 'update_orders_by_id' procedure
+  fields:
+    - name: affectedRows
+      type: Int32!
+      description: The number of rows affected by the mutation
+    - name: returning
+      type: "[Orders!]!"
+      description: Data from rows affected by the mutation
+  graphql:
+    typeName: UpdateOrdersByIdResponse
+    inputTypeName: UpdateOrdersByIdResponseInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: update_orders_by_id_response
+      fieldMapping:
+        affectedRows:
+          column:
+            name: affected_rows
+        returning:
+          column:
+            name: returning
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: UpdateOrdersByIdResponse
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - affectedRows
+          - returning
+
+---
+kind: Command
+version: v1
+definition:
+  name: UpdateOrdersById
+  outputType: UpdateOrdersByIdResponse!
+  arguments:
+    - name: keyId
+      type: Uuid!
+    - name: postCheck
+      type: OrdersBoolExp
+      description: Update permission post-condition predicate over the 'orders' collection
+    - name: preCheck
+      type: OrdersBoolExp
+      description: Update permission pre-condition predicate over the 'orders' collection
+    - name: updateColumns
+      type: UpdateOrdersByIdUpdateColumns!
+  source:
+    dataConnectorName: my_pg
+    dataConnectorCommand:
+      procedure: update_orders_by_id
+    argumentMapping:
+      keyId: key_id
+      postCheck: post_check
+      preCheck: pre_check
+      updateColumns: update_columns
+  graphql:
+    rootFieldName: updateOrdersById
+    rootFieldKind: Mutation
+  description: Update any row on the 'orders' collection using the 'id' key
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: UpdateOrdersById
+  permissions:
+    - role: admin
+      allowExecution: true
+

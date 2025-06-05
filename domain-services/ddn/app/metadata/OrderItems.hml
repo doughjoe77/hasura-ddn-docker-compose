@@ -1,0 +1,196 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: OrderItems
+  fields:
+    - name: id
+      type: Uuid!
+    - name: orderId
+      type: Uuid
+    - name: productId
+      type: Uuid
+    - name: quantity
+      type: Int32
+  graphql:
+    typeName: OrderItems
+    inputTypeName: OrderItemsInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: order_items
+      fieldMapping:
+        id:
+          column:
+            name: id
+        orderId:
+          column:
+            name: order_id
+        productId:
+          column:
+            name: product_id
+        quantity:
+          column:
+            name: quantity
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: OrderItems
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - id
+          - orderId
+          - productId
+          - quantity
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: OrderItemsAggExp
+  operand:
+    object:
+      aggregatedType: OrderItems
+      aggregatableFields:
+        - fieldName: id
+          aggregateExpression: UuidAggExp
+        - fieldName: orderId
+          aggregateExpression: UuidAggExp
+        - fieldName: productId
+          aggregateExpression: UuidAggExp
+        - fieldName: quantity
+          aggregateExpression: Int4AggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: OrderItemsAggExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: OrderItems
+  objectType: OrderItems
+  source:
+    dataConnectorName: my_pg
+    collection: order_items
+  filterExpressionType: OrderItemsBoolExp
+  aggregateExpression: OrderItemsAggExp
+  orderByExpression: OrderItemsOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: orderItems
+      subscription:
+        rootField: orderItems
+    selectUniques:
+      - queryRootField: orderItemsById
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: orderItemsById
+    filterInputTypeName: OrderItemsFilterInput
+    aggregate:
+      queryRootField: orderItemsAggregate
+      subscription:
+        rootField: orderItemsAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: OrderItems
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+
+---
+kind: Relationship
+version: v1
+definition:
+  name: order
+  sourceType: OrderItems
+  target:
+    model:
+      name: Orders
+      relationshipType: Object
+  mapping:
+    - source:
+        fieldPath:
+          - fieldName: orderId
+      target:
+        modelField:
+          - fieldName: id
+
+---
+kind: Relationship
+version: v1
+definition:
+  name: product
+  sourceType: OrderItems
+  target:
+    model:
+      name: Products
+      relationshipType: Object
+  mapping:
+    - source:
+        fieldPath:
+          - fieldName: productId
+      target:
+        modelField:
+          - fieldName: id
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: OrderItemsBoolExp
+  operand:
+    object:
+      type: OrderItems
+      comparableFields:
+        - fieldName: id
+          booleanExpressionType: UuidBoolExp
+        - fieldName: orderId
+          booleanExpressionType: UuidBoolExp
+        - fieldName: productId
+          booleanExpressionType: UuidBoolExp
+        - fieldName: quantity
+          booleanExpressionType: Int4BoolExp
+      comparableRelationships:
+        - relationshipName: order
+        - relationshipName: product
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: OrderItemsBoolExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: OrderItemsOrderByExp
+  operand:
+    object:
+      orderedType: OrderItems
+      orderableFields:
+        - fieldName: id
+          orderByExpression: UuidOrderByExp
+        - fieldName: orderId
+          orderByExpression: UuidOrderByExp
+        - fieldName: productId
+          orderByExpression: UuidOrderByExp
+        - fieldName: quantity
+          orderByExpression: Int32OrderByExp
+      orderableRelationships:
+        - relationshipName: order
+        - relationshipName: product
+  graphql:
+    expressionTypeName: OrderItemsOrderByExp
+

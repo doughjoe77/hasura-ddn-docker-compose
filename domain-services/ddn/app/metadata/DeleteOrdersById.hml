@@ -1,0 +1,72 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: DeleteOrdersByIdResponse
+  description: Responses from the 'delete_orders_by_id' procedure
+  fields:
+    - name: affectedRows
+      type: Int32!
+      description: The number of rows affected by the mutation
+    - name: returning
+      type: "[Orders!]!"
+      description: Data from rows affected by the mutation
+  graphql:
+    typeName: DeleteOrdersByIdResponse
+    inputTypeName: DeleteOrdersByIdResponseInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: delete_orders_by_id_response
+      fieldMapping:
+        affectedRows:
+          column:
+            name: affected_rows
+        returning:
+          column:
+            name: returning
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: DeleteOrdersByIdResponse
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - affectedRows
+          - returning
+
+---
+kind: Command
+version: v1
+definition:
+  name: DeleteOrdersById
+  outputType: DeleteOrdersByIdResponse!
+  arguments:
+    - name: keyId
+      type: Uuid!
+    - name: preCheck
+      type: OrdersBoolExp
+      description: Delete permission predicate over the 'orders' collection
+  source:
+    dataConnectorName: my_pg
+    dataConnectorCommand:
+      procedure: delete_orders_by_id
+    argumentMapping:
+      keyId: key_id
+      preCheck: pre_check
+  graphql:
+    rootFieldName: deleteOrdersById
+    rootFieldKind: Mutation
+  description: Delete any row on the 'orders' collection using the 'id' key
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: DeleteOrdersById
+  permissions:
+    - role: admin
+      allowExecution: true
+

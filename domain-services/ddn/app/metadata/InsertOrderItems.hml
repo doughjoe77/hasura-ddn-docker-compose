@@ -1,0 +1,120 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: InsertOrderItemsObject
+  fields:
+    - name: id
+      type: Uuid!
+    - name: orderId
+      type: Uuid
+    - name: productId
+      type: Uuid
+    - name: quantity
+      type: Int32
+  graphql:
+    typeName: InsertOrderItemsObject
+    inputTypeName: InsertOrderItemsObjectInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: insert_order_items_object
+      fieldMapping:
+        id:
+          column:
+            name: id
+        orderId:
+          column:
+            name: order_id
+        productId:
+          column:
+            name: product_id
+        quantity:
+          column:
+            name: quantity
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: InsertOrderItemsObject
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - id
+          - orderId
+          - productId
+          - quantity
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: InsertOrderItemsResponse
+  description: Responses from the 'insert_order_items' procedure
+  fields:
+    - name: affectedRows
+      type: Int32!
+      description: The number of rows affected by the mutation
+    - name: returning
+      type: "[OrderItems!]!"
+      description: Data from rows affected by the mutation
+  graphql:
+    typeName: InsertOrderItemsResponse
+    inputTypeName: InsertOrderItemsResponseInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: insert_order_items_response
+      fieldMapping:
+        affectedRows:
+          column:
+            name: affected_rows
+        returning:
+          column:
+            name: returning
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: InsertOrderItemsResponse
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - affectedRows
+          - returning
+
+---
+kind: Command
+version: v1
+definition:
+  name: InsertOrderItems
+  outputType: InsertOrderItemsResponse!
+  arguments:
+    - name: objects
+      type: "[InsertOrderItemsObject!]!"
+    - name: postCheck
+      type: OrderItemsBoolExp
+      description: Insert permission predicate over the 'order_items' collection
+  source:
+    dataConnectorName: my_pg
+    dataConnectorCommand:
+      procedure: insert_order_items
+    argumentMapping:
+      objects: objects
+      postCheck: post_check
+  graphql:
+    rootFieldName: insertOrderItems
+    rootFieldKind: Mutation
+  description: Insert into the order_items table
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: InsertOrderItems
+  permissions:
+    - role: admin
+      allowExecution: true
+
