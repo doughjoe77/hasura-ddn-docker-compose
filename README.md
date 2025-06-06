@@ -55,7 +55,7 @@ query MyQuery {
 
 # Training and Informational Links
 - [Local Development Examples with different DBs](https://github.com/hasura/ddn-examples/blob/main/README.md)
-- [DDN CLI Installation](https://hasura.io/docs/3.0/reference/cli/installation/) - **REQUIRED** for Hasura Development going forward.
+- [DDN CLI Installation](https://hasura.io/docs/3.0/reference/cli/installation/) - **REQUIRED** for Hasura DDV Development
 - [Hasura DDN VS Code Plugin](https://marketplace.visualstudio.com/items?itemName=HasuraHQ.hasura)
 
 # Video Links
