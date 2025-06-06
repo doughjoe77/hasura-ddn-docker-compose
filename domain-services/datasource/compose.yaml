@@ -10,20 +10,21 @@ services:
     volumes:
       - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-    ports:
-      - "9200:9200"
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-      - ./init:/usr/share/elasticsearch/init
-    entrypoint: >
-      /bin/bash -c "elasticsearch-plugin install analysis-phonetic;
-      /usr/local/bin/docker-entrypoint.sh"
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
+  #   container_name: elasticsearch
+  #   environment:
+  #     - discovery.type=single-node
+  #     - xpack.security.enabled=false
+  #     - xpack.license.self_generated.type=trial
+  #   ports:
+  #     - "9200:9200"
+  #   volumes:
+  #     - es_data:/usr/share/elasticsearch/data
+  #     - ./init:/usr/share/elasticsearch/init
+  #   entrypoint: >
+  #     /bin/bash -c "elasticsearch-plugin install analysis-phonetic;
+  #     /usr/local/bin/docker-entrypoint.sh"
 
   # DB IDE for PostgreSQL only
   pgadmin:
@@ -41,39 +42,36 @@ services:
     volumes:
       - ./pg-admin-setup/servers.json:/pgadmin4/servers.json
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.4.3
-    container_name: kibana
-    depends_on:
-      - elasticsearch
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.4.3
+  #   container_name: kibana
+  #   depends_on:
+  #     - elasticsearch
+  #   ports:
+  #     - "5601:5601"
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 
-  elastic_setup_data:
-    image: curlimages/curl
-    depends_on:
-      - elasticsearch
-    entrypoint: >
-      /bin/bash -c "
-      sleep 10;
-      curl -X PUT 'http://elasticsearch:9200/demo' -H 'Content-Type: application/json' -d '{\"settings\": {\"number_of_shards\": 1}, \"mappings\": {\"properties\": {\"title\": {\"type\": \"text\"}}}}';
-      curl -X POST 'http://elasticsearch:9200/demo/_doc/1' -H 'Content-Type: application/json' -d '{\"title\": \"Elasticsearch for Beginners\"}';
-      curl -X POST 'http://elasticsearch:9200/demo/_doc/2' -H 'Content-Type: application/json' -d '{\"title\": \"Advanced Search in Elasticsearch\"}';
-      curl -X POST 'http://elasticsearch:9200/demo/_doc/3' -H 'Content-Type: application/json' -d '{\"title\": \"Deploying Elasticsearch with Docker\"}';
-      "
+  # elastic_setup_data:
+  #   image: curlimages/curl
+  #   depends_on:
+  #     - elasticsearch
+  #   entrypoint: >
+  #     /bin/bash -c "
+  #     sleep 10;
+  #     curl -X PUT "http://elasticsearch:9200/customers/" -u elastic:elastic -H 'Content-Type: application/json' -d '{"mappings":{"properties":{"customer_id":{"type":"keyword"},"name":{"type":"text","fields":{"keyword":{"type":"keyword"}}},"email":{"type":"keyword","index":true},"location":{"type":"geo_point"}}}}'
+  #     curl -X POST "http://elasticsearch:9200/_bulk" -u elastic:elastic -H 'Content-Type: application/json' -d '{"index":{"_index":"customers","_id":"1"}}{"customer_id":"CUST001","name":"John Doe","email":"john.doe@example.com","location":{"lat":40.7128,"lon":-74.0060}}{"index":{"_index":"customers","_id":"2"}}{"customer_id":"CUST002","name":"Jane Smith","email":"jane.smith@example.com","location":{"lat":34.0522,"lon":-118.2437}}{"index":{"_index":"customers","_id":"3"}}{"customer_id":"CUST003","name":"Alice Johnson","email":"alice.j@example.com","location":{"lat":51.5074,"lon":-0.1278}}{"index":{"_index":"customers","_id":"4"}}{"customer_id":"CUST004","name":"Bob Brown","email":"bob.brown@example.com","location":{"lat":48.8566,"lon":2.3522}}{"index":{"_index":"customers","_id":"5"}}{"customer_id":"CUST005","name":"Charlie Davis","email":"charlie.d@example.com","location":{"lat":35.6895,"lon":139.6917}}'
+  #     "
 
-  kibana_setup:
-    image: curlimages/curl
-    depends_on:
-      - kibana
-    entrypoint: >
-      /bin/bash -c "
-      sleep 30;
-      curl -X POST 'http://kibana:5601/api/saved_objects/index-pattern/demo-pattern' -H 'Content-Type: application/json' -H 'kbn-xsrf: true' -d '{\"attributes\": {\"title\": \"demo-*\", \"timeFieldName\": \"timestamp\"}}';
-      curl -X POST 'http://kibana:5601/api/saved_objects/dashboard/demo-dashboard' -H 'Content-Type: application/json' -H 'kbn-xsrf: true' -d '{\"attributes\": {\"title\": \"Demo Dashboard\"}}';
-      "
+  # kibana_setup:
+  #   image: curlimages/curl
+  #   depends_on:
+  #     - kibana
+  #   entrypoint: >
+  #     /bin/bash -c "
+  #     sleep 30;
+  #     curl -X POST "http://localhost:5601/api/saved_objects/visualization/my-pie-chart" -u elastic:elastic -H "Content-Type:application/json" -H "kbn-xsrf:true" -d '{"attributes":{"title":"Customer Distribution","visState":"{\"title\":\"Customer Distribution\",\"type\":\"pie\",\"params\":{\"addLegend\":true,\"addTooltip\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\"},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"customer_id.keyword\",\"order\":\"desc\",\"orderBy\":\"1\",\"size\":5}}]}","uiStateJSON":"{}","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"index\":\"customers\",\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"}}}'
+  #     "
 
   # Hasura DDN does not have a UI for Database setups or authorization, as opposed
   # to working purely in DDN (3.0), I'm including a 2.0 engine that can be used to
@@ -100,6 +98,6 @@ services:
       # un-comment the following line to activate JWT Authentication:
       #HASURA_GRAPHQL_JWT_SECRET: '{ "type": "RS256", "jwk_url": "http://keycloak:8080/realms/ski/protocol/openid-connect/certs","claims_map":{"x-hasura-allowed-roles":["query_world","query_usda","query_mutate_adventureworks","query_mutate_chinook","query_mutate_vercel"],"x-hasura-default-role":"query_world"} }'
       HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: "naming_convention"
-      
+
 volumes:
   es_data:
