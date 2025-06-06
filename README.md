@@ -35,7 +35,7 @@ query MyQuery {
 }
 ```
 - Sample 2.0 Query
-```
+```gql
 query MyQuery {
   customers(
     where: {lastName: {_ilike: "Jo%"}}
