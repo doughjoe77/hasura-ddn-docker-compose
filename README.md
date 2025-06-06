@@ -21,15 +21,16 @@ Just as a note, there are very ***slight*** differences between Hasura 2.0 and D
 - Sample Hasura DDN Query:
 ```gql
 query MyQuery {
-  customers {
-    id
+  customers(
+    where: {lastName: {_ilike: "Jo%"}}
+    limit: 35
+    order_by: {firstName: Asc}
+  ) {
     firstName
-    orders {
-      orderDate
-      orderItemsAggregate {
-        _count
-      }
-      totalAmount
+    lastName
+    email
+    ordersAggregate {
+      _count
     }
   }
 }
