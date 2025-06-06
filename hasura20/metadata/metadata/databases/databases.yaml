@@ -1,0 +1,11 @@
+- name: api-hub
+  kind: postgres
+  configuration:
+    connection_info:
+      database_url:
+        from_env: API_HUB
+      isolation_level: read-committed
+      use_prepared_statements: false
+  customization:
+    naming_convention: graphql-default
+  tables: "!include api-hub/tables/tables.yaml"

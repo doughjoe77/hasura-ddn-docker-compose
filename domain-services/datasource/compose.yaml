@@ -75,5 +75,31 @@ services:
       curl -X POST 'http://kibana:5601/api/saved_objects/dashboard/demo-dashboard' -H 'Content-Type: application/json' -H 'kbn-xsrf: true' -d '{\"attributes\": {\"title\": \"Demo Dashboard\"}}';
       "
 
+  # Hasura DDN does not have a UI for Database setups or authorization, as opposed
+  # to working purely in DDN (3.0), I'm including a 2.0 engine that can be used to
+  # generate metadata that can be converted to Hasura DDN complient YAML; this is
+  # included ONLY for local development purposes
+  graphql-engine-editor:
+    image: hasura/graphql-engine:latest
+    depends_on:
+      - "postgres"
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgres@postgres:5432/metadata
+      API_HUB: postgres://postgres:postgres@postgres:5432/postgres
+      ## enable the console served by server
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set "false" to disable console
+      ## enable debugging mode. It is recommended to disable this in production
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      ## uncomment next line to run console offline (i.e load console assets from server instead of CDN)
+      # HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /srv/console-assets
+      ## uncomment next line to set an admin secret
+      HASURA_GRAPHQL_ADMIN_SECRET: 123456
+      # un-comment the following line to activate JWT Authentication:
+      #HASURA_GRAPHQL_JWT_SECRET: '{ "type": "RS256", "jwk_url": "http://keycloak:8080/realms/ski/protocol/openid-connect/certs","claims_map":{"x-hasura-allowed-roles":["query_world","query_usda","query_mutate_adventureworks","query_mutate_chinook","query_mutate_vercel"],"x-hasura-default-role":"query_world"} }'
+      HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: "naming_convention"
+      
 volumes:
   es_data:

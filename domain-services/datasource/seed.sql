@@ -645,3 +645,5 @@ INSERT INTO order_items (id, order_id, product_id, quantity) VALUES
 ('a6796762-1c77-405a-a146-f132a310b38c', '379f1bf7-0e77-4a33-adb4-20e75fb7a159', 'd3243eda-1835-4d9c-8dc8-e98392c80ecc', 6),
 ('3f456d6b-3d38-409f-8c45-8a8cdd1a0a8b', '379f1bf7-0e77-4a33-adb4-20e75fb7a159', 'e52b9a12-a976-4f4d-b961-db1eb9250b4a', 4),
 ('4c26e100-9505-486e-9384-f7804c13cde3', '379f1bf7-0e77-4a33-adb4-20e75fb7a159', 'c2f9f099-3619-4e33-b1f5-02271e509ac6', 5);
+
+CREATE DATABASE metadata;
