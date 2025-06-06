@@ -38,16 +38,14 @@ query MyQuery {
 - Sample 2.0 Query
 ```gql
 query MyQuery {
-  customers(
-    where: {lastName: {_ilike: "Jo%"}}
-    limit: 35
-    orderBy: {firstName: ASC}
-  ) {
+  # 2.0 has a slighlty different syntatax for the order by statement
+  customers(where: {lastName: {_ilike: "Jo%"}}, limit: 35, orderBy: {firstName: ASC}) {
     firstName
     lastName
     email
     ordersAggregate {
-      aggregate{
+      # 2.0 has a slightly different syntax for aggregate queries
+      aggregate {
         count
       }
     }
