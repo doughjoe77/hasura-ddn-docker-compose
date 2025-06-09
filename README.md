@@ -18,9 +18,9 @@ While Hasura 2.0 has a robust UI for development (adding connectors, database ob
 
 # Sample GraphQL Queries
 Just as a note, there are very ***slight*** differences between Hasura 2.0 and DDN GraphQL queries, the queries below return the same results but have a slightly different syntax.
-- Sample Hasura DDN Query:
+- Sample Hasura DDN Query
 ```gql
-query MyQuery {
+query CustomersDDNQuery {
   customers(
     where: {lastName: {_ilike: "Jo%"}}
     limit: 35
@@ -35,9 +35,9 @@ query MyQuery {
   }
 }
 ```
-- Sample 2.0 Query
+- Sample 2.0 Query (Hasura 2.0)
 ```gql
-query MyQuery {
+query Customers20Query {
   # 2.0 has a slighlty different syntatax for the order by statement
   customers(where: {lastName: {_ilike: "Jo%"}}, limit: 35, orderBy: {firstName: ASC}) {
     firstName
@@ -52,8 +52,33 @@ query MyQuery {
   }
 }
 ```
-# Sample GraphQL API
-- run `npm install express apollo-server-express graphql`
+- Sample Query 3 (Hasura 2.0, Remote Schema Custom GraphQL API)
+```gql
+query States20Query {
+  states
+}
+```
+
+# DDN CLI Cheatsheat
+Quick collection of available DDN commands as of 6/2025, you can also run the command `ddn connector --help` to get more detailed help for a specific option.
+
+| Command              | Description                                                                                     | Example Usage                                                        |
+|----------------------|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| **auth**             | Manage authentication—log in or log out of the Hasura DDN CLI.                                  | `ddn auth login`                                                     |
+| **supergraph**       | Manage your Hasura DDN supergraph (project configuration, deployment, etc.).                    | `ddn supergraph init my-project`                                     |
+| **connector**        | Handle connector-related operations such as initialization and schema introspection.            | `ddn connector init my_connector`<br>`ddn connector introspect my_connector`<br>`ddn connector show-resources my_connector` |
+| **connector-link**   | Manage DataConnectorLink operations to link data sources.                                       | `ddn connector-link create my_link`                                  |
+| **model**            | Manage data models (the equivalent of tables/entities in your schema).                          | `ddn model list`                                                     |
+| **relationship**     | Define and manage relationships between models (e.g., array or object relationships).            | `ddn relationship create orders_customers`                           |
+| **subgraph**         | Perform operations on subgraphs—useful when modularizing your API into separate graph sections.  | `ddn subgraph add my_subgraph`                                       |
+| **codemod**          | Run codemod transformations to refactor or migrate your project’s configuration and metadata.     | `ddn codemod run`                                                    |
+| **run**              | Execute a custom script defined in your project's context.                                      | `ddn run seed`                                                       |
+| **completion**       | Generate autocompletion scripts for your shell (bash, zsh, etc.).                                 | `ddn completion bash`                                                |
+| **plugins**          | Manage CLI plugins that extend the core functionality of the DDN CLI.                           | `ddn plugins install plugin-name`                                    |
+| **config update-cli**| Update the Hasura DDN CLI to the latest (or a specified) version.                               | `ddn config update-cli --version latest`                             |
+| **version**          | Show the current version of the Hasura DDN CLI.                                                 | `ddn version`                                                        |
+| **help**             | Display help information for a command or the CLI as a whole.                                   | `ddn help` or `ddn [command] --help`                                   |
+
 
 # Training and Informational Links
 - [Local Development Examples with different DBs](https://github.com/hasura/ddn-examples/blob/main/README.md)
