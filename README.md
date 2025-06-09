@@ -52,6 +52,8 @@ query MyQuery {
   }
 }
 ```
+# Sample GraphQL API
+- run `npm install express apollo-server-express graphql`
 
 # Training and Informational Links
 - [Local Development Examples with different DBs](https://github.com/hasura/ddn-examples/blob/main/README.md)

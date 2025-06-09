@@ -10,6 +10,7 @@ services:
     volumes:
       - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql
 
+  # https://hasura.io/docs/3.0/how-to-build-with-ddn/with-elasticsearch/
   # elasticsearch:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
   #   container_name: elasticsearch
@@ -78,6 +79,7 @@ services:
   # generate metadata that can be converted to Hasura DDN complient YAML; this is
   # included ONLY for local development purposes
   graphql-engine-editor:
+    container_name: graphql-engine-editor
     image: hasura/graphql-engine:latest
     depends_on:
       - "postgres"
@@ -98,6 +100,14 @@ services:
       # un-comment the following line to activate JWT Authentication:
       #HASURA_GRAPHQL_JWT_SECRET: '{ "type": "RS256", "jwk_url": "http://keycloak:8080/realms/ski/protocol/openid-connect/certs","claims_map":{"x-hasura-allowed-roles":["query_world","query_usda","query_mutate_adventureworks","query_mutate_chinook","query_mutate_vercel"],"x-hasura-default-role":"query_world"} }'
       HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: "naming_convention"
+      HASURA_GRAPHQL_ENABLE_REMOTE_SCHEMA_PERMISSIONS: "true"
+
+  # test GraphQL API
+  sample-gql:
+    container_name: sample-gql
+    build: ../../sample-gql
+    ports:
+      - "4000:4000"
 
 volumes:
   es_data:
