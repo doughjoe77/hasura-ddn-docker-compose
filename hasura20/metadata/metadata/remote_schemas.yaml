@@ -1,1 +1,6 @@
-[]
+- name: sample
+  definition:
+    url: http://sample-gql:4000/graphql
+    timeout_seconds: 60
+    customization: {}
+  comment: ""
