@@ -9,12 +9,9 @@ Project for running an example Haura project both fully locally and in a hybrid 
  - To access Elasticsearch use the locally hosted click on the [Kibana](http://localhost:5601) link.
  - To access a SQL Editor for Postgres, you can click on the [PG Admin](http://localhost:8889/browser/) link.
 
-# using Hasura 2.0 to develop for Hasura DDN
-While Hasura 2.0 has a robust UI for development (adding connectors, database objects, authorization, actions, remote schemas, etc.); Hasura DDN **ONLY** has an option for using YAML files to do the same type of work. Due to that, this project loads both Hasura 2.0 AND Hasura DDN and allows you to develop in 2.0 for DDN by exporting the 2.0 YAML files and converting them to DDN compliant YAML files. The following scripts are used to make this happen leveraging the Hasura 2.0 CLI:
-- `.\hasura20\load-metadata.ps1` - script will load 2.0 metadata contained in the `./hasura20/metadata` directory into the Hasura 2.0 instance running locally at http://localhost:8080, if you are running the project for the first time and want to load the Hasura 2.0 instance with metadata, run this command ***AFTER*** running `.\build.ps1`
-- `.\hasura20\export-metadata.ps1` - script exports the current 2.0 metadata into a YAML files structure found under ./hasura20/metadata
-- `.\hasura20\convert20-to-ddn.ps1` - script will take the 2.0 metadata and convert it to Hasura DDN metadata where the feature parity is a one-to-one match; ***THIS IS A Work-in-progress currently***
-- `.\hasura20\convertddn-to-20.ps1` - script will take the ddn metadata and convert it to Hasura 2.0 metadata where the feature parity is a one-to-one match; ***THIS IS A Work-in-progress currently***
+# Hasura DDN Helper Scripts
+It sometimes takes ALOT of DDN commands to exeucte on task, we've created some wrapper PowerShell scripts to assist with those items and to cut down on developer time / knowledge
+- `.\ddn-add-connector.ps1` - wraps the 4-6 DDN commands used to add a new connector, apply that connector, and update your running Hasura DDN instance with that data. Running the command will kick off DDN in such a way that it will ask you what connector you want to add, and then ask for the values needed to set that connector up. It will update your .env and any Hasura DDN metadata files.
 
 # Sample GraphQL Queries
 Just as a note, there are very ***slight*** differences between Hasura 2.0 and DDN GraphQL queries, the queries below return the same results but have a slightly different syntax.
@@ -58,9 +55,9 @@ query States20Query {
   states
 }
 ```
-
 # DDN CLI Cheatsheat
-Quick collection of available DDN commands as of 6/2025, you can also run the command `ddn connector --help` to get more detailed help for a specific option.
+Quick collection of available DDN commands as of 6/2025, you can also run the command `ddn connector --help` to get more detailed help for a specific option. <br>
+**NOTE**: You MUST be in the `./domain-services/ddn` directory to run any of the following commands successfully.
 
 | Command              | Description                                                                                     | Example Usage                                                        |
 |----------------------|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
@@ -79,6 +76,38 @@ Quick collection of available DDN commands as of 6/2025, you can also run the co
 | **version**          | Show the current version of the Hasura DDN CLI.                                                 | `ddn version`                                                        |
 | **help**             | Display help information for a command or the CLI as a whole.                                   | `ddn help` or `ddn [command] --help`                                   |
 
+## Quick Examples
+### add a new GraphQL API
+**NOTE**: Names must start with a letter, followed by any letters, digits, or underscores.
+**NOTE**: Unlike Hasura 2.0 and Docker, the API URL you would use is not the internal name of the URL in Docker Compose, http://containername:4000/graphql for example, but instead MUST be accessible from your console, in my example the GraphQL API was resident at http://localhost:4000/graphql and I had to use that instead. If you don't do this your DDN file will fail to build. Post creation of the endpoint, you must change the `configuration.json`, and `ddn build` again. You must do this each time you modify your custom GraphQL API endpoint to pick up those changes.<br>
+```ps
+# Initialize a new GraphQL connector for your API
+ddn connector init my_graphql -i
+# (Select GraphQL connector type and provide the endpoint when prompted.)
+
+# Introspect the external GraphQL API schema
+ddn connector introspect my_graphql
+
+# Add model to your Graph
+ddn model add my_graphql * --subgraph ./app/subgraph.yaml
+
+# build your local graph
+ddn supergraph build local
+
+# Run your local engine
+ddn run docker-start
+
+# Remove a connector and any objects associated with it
+ ddn connector remove my_graphql --subgraph ./app/subgraph.yaml
+
+```
+
+# using Hasura 2.0 to develop for Hasura DDN
+While Hasura 2.0 has a robust UI for development (adding connectors, database objects, authorization, actions, remote schemas, etc.); Hasura DDN **ONLY** has an option for using YAML files to do the same type of work. Due to that, this project loads both Hasura 2.0 AND Hasura DDN and allows you to develop in 2.0 for DDN by exporting the 2.0 YAML files and converting them to DDN compliant YAML files. The following scripts are used to make this happen leveraging the Hasura 2.0 CLI:
+- `.\hasura20\load-metadata.ps1` - script will load 2.0 metadata contained in the `./hasura20/metadata` directory into the Hasura 2.0 instance running locally at http://localhost:8080, if you are running the project for the first time and want to load the Hasura 2.0 instance with metadata, run this command ***AFTER*** running `.\build.ps1`
+- `.\hasura20\export-metadata.ps1` - script exports the current 2.0 metadata into a YAML files structure found under ./hasura20/metadata
+- `.\hasura20\convert20-to-ddn.ps1` - script will take the 2.0 metadata and convert it to Hasura DDN metadata where the feature parity is a one-to-one match; ***THIS IS A Work-in-progress currently***
+- `.\hasura20\convertddn-to-20.ps1` - script will take the ddn metadata and convert it to Hasura 2.0 metadata where the feature parity is a one-to-one match; ***THIS IS A Work-in-progress currently***
 
 # Training and Informational Links
 - [Local Development Examples with different DBs](https://github.com/hasura/ddn-examples/blob/main/README.md)
@@ -91,4 +120,6 @@ Quick collection of available DDN commands as of 6/2025, you can also run the co
 - [Local Development plus API Refinement](https://www.youtube.com/watch?v=WuyOhGThm8c)
 - [Create Hasura generated REST APIs](https://www.youtube.com/watch?v=Iuxhjo7Ko9c)
 = [GraphQL Federation (v2 Remote Schemas) as a connector in DDN](https://www.youtube.com/watch?v=LJBTBIOB44U)
+- [Metadata Upgrade from Hasura 2.0 to DDN](https://hasura.io/docs/3.0/upgrade/overview/)
+
 

@@ -1,0 +1,21 @@
+packagingDefinition:
+  type: PrebuiltDockerImage
+  dockerImage: ghcr.io/hasura/ndc-graphql:v0.2.0
+supportedEnvironmentVariables:
+  - name: GRAPHQL_ENDPOINT
+    description: The GraphQL Endpoint
+    defaultValue: ""
+    required: true
+commands:
+  update: hasura-ndc-graphql update
+  printSchemaAndCapabilities: hasura-ndc-graphql print-schema-and-capabilities
+  upgradeConfiguration: hasura-ndc-graphql upgrade-configuration
+cliPlugin:
+  type: null
+  name: ndc-graphql
+  version: v0.2.0
+dockerComposeWatch:
+  - path: ./
+    action: sync+restart
+    target: /etc/connector
+documentationPage: https://hasura.info/graphql-getting-started

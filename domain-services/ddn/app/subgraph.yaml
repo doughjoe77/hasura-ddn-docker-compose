@@ -8,6 +8,12 @@ definition:
   includePaths:
     - metadata
   envMapping:
+    APP_MY_GRAPHQL_AUTHORIZATION_HEADER:
+      fromEnv: APP_MY_GRAPHQL_AUTHORIZATION_HEADER
+    APP_MY_GRAPHQL_READ_URL:
+      fromEnv: APP_MY_GRAPHQL_READ_URL
+    APP_MY_GRAPHQL_WRITE_URL:
+      fromEnv: APP_MY_GRAPHQL_WRITE_URL
     APP_MY_PG_AUTHORIZATION_HEADER:
       fromEnv: APP_MY_PG_AUTHORIZATION_HEADER
     APP_MY_PG_READ_URL:
@@ -17,3 +23,5 @@ definition:
   connectors:
     - path: connector/my_pg/connector.yaml
       connectorLinkName: my_pg
+    - path: connector/my_graphql/connector.yaml
+      connectorLinkName: my_graphql

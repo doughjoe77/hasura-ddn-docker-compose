@@ -109,5 +109,8 @@ services:
     ports:
       - "4000:4000"
 
+networks:
+  - ddn
+
 volumes:
   es_data:

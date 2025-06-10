@@ -1,0 +1,44 @@
+kind: DataConnectorLink
+version: v1
+definition:
+  name: my_graphql
+  url:
+    readWriteUrls:
+      read:
+        valueFromEnv: APP_MY_GRAPHQL_READ_URL
+      write:
+        valueFromEnv: APP_MY_GRAPHQL_WRITE_URL
+  headers:
+    Authorization:
+      valueFromEnv: APP_MY_GRAPHQL_AUTHORIZATION_HEADER
+  schema:
+    version: v0.1
+    schema:
+      scalar_types:
+        Boolean:
+          aggregate_functions: {}
+          comparison_operators: {}
+        String:
+          aggregate_functions: {}
+          comparison_operators: {}
+      object_types: {}
+      collections: []
+      functions:
+        - name: states
+          arguments: {}
+          result_type:
+            element_type:
+              name: String
+              type: named
+            type: array
+      procedures: []
+    capabilities:
+      version: 0.1.6
+      capabilities:
+        query:
+          variables: {}
+          explain: {}
+          nested_fields: {}
+          exists: {}
+        mutation:
+          explain: {}

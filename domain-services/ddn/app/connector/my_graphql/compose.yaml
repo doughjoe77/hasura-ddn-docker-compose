@@ -1,0 +1,14 @@
+services:
+  app_my_graphql:
+    build:
+      context: .
+      dockerfile: .hasura-connector/Dockerfile.my_graphql
+    environment:
+      GRAPHQL_ENDPOINT: $APP_MY_GRAPHQL_GRAPHQL_ENDPOINT
+      HASURA_SERVICE_TOKEN_SECRET: $APP_MY_GRAPHQL_HASURA_SERVICE_TOKEN_SECRET
+      OTEL_EXPORTER_OTLP_ENDPOINT: $APP_MY_GRAPHQL_OTEL_EXPORTER_OTLP_ENDPOINT
+      OTEL_SERVICE_NAME: $APP_MY_GRAPHQL_OTEL_SERVICE_NAME
+    extra_hosts:
+      - local.hasura.dev:host-gateway
+    ports:
+      - 4591:8080

@@ -1,0 +1,23 @@
+---
+kind: Command
+version: v1
+definition:
+  name: States
+  outputType: "[String!]!"
+  source:
+    dataConnectorName: my_graphql
+    dataConnectorCommand:
+      function: states
+  graphql:
+    rootFieldName: states
+    rootFieldKind: Query
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: States
+  permissions:
+    - role: admin
+      allowExecution: true
+

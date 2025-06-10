@@ -4,4 +4,7 @@ $Env:PROMPTQL_SECRET_KEY = ddn auth print-promptql-secret-key
 docker compose -f ./domain-services/datasource/compose.yaml --env-file ./domain-services/datasource/.env up -d
 
 # bring up the DDN and it's components
-docker compose -f ./domain-services/ddn/compose.yaml --env-file ./domain-services/ddn/.env up -d
+#docker compose -f ./domain-services/ddn/compose.yaml --env-file ./domain-services/ddn/.env up -d
+Push-Location "./domain-services/ddn"
+ddn run docker-start -- -d
+Pop-Location
