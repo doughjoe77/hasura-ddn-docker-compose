@@ -110,7 +110,9 @@ services:
       - "4000:4000"
 
 networks:
-  - ddn
+  default:
+    external:
+      name: ddn
 
 volumes:
   es_data:

@@ -31,3 +31,8 @@ services:
       - 4318:4318
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+
+networks:
+  default:
+    external:
+      name: ddn
