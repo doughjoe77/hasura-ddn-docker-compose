@@ -10,7 +10,8 @@ Project for running an example Haura project both fully locally and in a hybrid 
 
 # Hasura DDN Helper Scripts
 It sometimes takes ALOT of DDN commands to execute on task, we've created some wrapper PowerShell scripts to assist with those items and to cut down on developer time / knowledge
-- `.\ddn-add-connector.ps1` - wraps the 4-6 DDN commands used to add a new connector, apply that connector, and update your running Hasura DDN instance with that data. Running the command will kick off DDN in such a way that it will ask you what connector you want to add and then ask for the values needed to set that connector up. It will update your .env and any Hasura DDN metadata files.
+- `.\ddn-add-connector.ps1` - wraps the 4-6 DDN commands used to add a new connector, apply that connector, and update your running Hasura DDN instance with that data. Running the command will kick off DDN in such a way that it will ask you what connector you want to add and then ask for the values needed to set that connector up. It will update your .env and any Hasura DDN metadata files.<br>**NOTE**: Names must start with a letter, followed by any letters, digits, or underscores.
+<br>**NOTE**: When adding REST or GraphQL APIs, unlike Hasura 2.0 and Docker, the API URL you would use is not the internal name of the URL in Docker Compose, http://containername:4000/graphql for example, but instead MUST be accessible from your console, in my example the GraphQL API was resident at http://localhost:4000/graphql and I had to use that instead. If you don't do this your DDN file will fail to build. Post creation of the connector, you must change the `.env`, and run the `./start.ps1` again. You must do this each time you modify your custom GraphQL API endpoint to pick up those changes.<br>
 
 # Sample GraphQL Queries
 Just as a note, there are very ***slight*** differences between Hasura 2.0 and DDN GraphQL queries, the queries below return the same results but have a slightly different syntax.
@@ -74,32 +75,6 @@ Quick collection of available DDN commands as of 6/2025, you can also run the co
 | **config update-cli**| Update the Hasura DDN CLI to the latest (or a specified) version.                               | `ddn config update-cli --version latest`                             |
 | **version**          | Show the current version of the Hasura DDN CLI.                                                 | `ddn version`                                                        |
 | **help**             | Display help information for a command or the CLI as a whole.                                   | `ddn help` or `ddn [command] --help`                                   |
-
-## Quick Examples
-### add a new GraphQL API
-**NOTE**: Names must start with a letter, followed by any letters, digits, or underscores.
-**NOTE**: Unlike Hasura 2.0 and Docker, the API URL you would use is not the internal name of the URL in Docker Compose, http://containername:4000/graphql for example, but instead MUST be accessible from your console, in my example the GraphQL API was resident at http://localhost:4000/graphql and I had to use that instead. If you don't do this your DDN file will fail to build. Post creation of the endpoint, you must change the `configuration.json`, and `ddn build` again. You must do this each time you modify your custom GraphQL API endpoint to pick up those changes.<br>
-```ps
-# Initialize a new GraphQL connector for your API
-ddn connector init my_graphql -i
-# (Select GraphQL connector type and provide the endpoint when prompted.)
-
-# Introspect the external GraphQL API schema
-ddn connector introspect my_graphql
-
-# Add model to your Graph
-ddn model add my_graphql * --subgraph ./app/subgraph.yaml
-
-# build your local graph
-ddn supergraph build local
-
-# Run your local engine
-ddn run docker-start
-
-# Remove a connector and any objects associated with it
- ddn connector remove my_graphql --subgraph ./app/subgraph.yaml
-
-```
 
 # using Hasura 2.0 to develop for Hasura DDN
 While Hasura 2.0 has a robust UI for development (adding connectors, database objects, authorization, actions, remote schemas, etc.); Hasura DDN **ONLY** has an option for using YAML files to do the same type of work. Due to that, this project loads both Hasura 2.0 AND Hasura DDN and allows you to develop in 2.0 for DDN by exporting the 2.0 YAML files and converting them to DDN compliant YAML files. The following scripts are used to make this happen leveraging the Hasura 2.0 CLI:
