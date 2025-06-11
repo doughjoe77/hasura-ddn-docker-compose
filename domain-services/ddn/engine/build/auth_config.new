@@ -1,0 +1,19 @@
+{
+  "kind": "AuthConfig",
+  "version": "v3",
+  "definition": {
+    "mode": {
+      "claimsConfig": {
+          "namespace": "https://hasura.io/jwt/claims"
+        },
+      "jwt": {
+        "tokenLocation": {
+          "type": "BearerAuthorization"
+        },
+        "key": {
+          "jwkFromUrl": "http://idp:3000/.well-known/jwks.json"
+        }
+      }
+    }
+  }
+}

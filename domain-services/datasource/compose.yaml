@@ -99,6 +99,12 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: 123456
       # un-comment the following line to activate JWT Authentication:
       #HASURA_GRAPHQL_JWT_SECRET: '{ "type": "RS256", "jwk_url": "http://keycloak:8080/realms/ski/protocol/openid-connect/certs","claims_map":{"x-hasura-allowed-roles":["query_world","query_usda","query_mutate_adventureworks","query_mutate_chinook","query_mutate_vercel"],"x-hasura-default-role":"query_world"} }'
+      HASURA_GRAPHQL_JWT_SECRET: >
+        {
+          "jwk_url": "http://idp:3000/.well-known/jwks.json",
+          "claims_namespace": "https://hasura.io/jwt/claims",
+          "audience": "local-hasura"
+        }
       HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: "naming_convention"
       HASURA_GRAPHQL_ENABLE_REMOTE_SCHEMA_PERMISSIONS: "true"
 
