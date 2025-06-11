@@ -10,6 +10,9 @@ Project for running an example Haura project both fully locally and in a hybrid 
 
 # JWT Authentication to Hasura
 Hasura is authenticated to using JSON Web Tokens (JWT), in this project is a minimal OAuth IDP that supports a client credential flow for obtaining JWTs to authenticate and be authorized to the Hasura Graph. The script `.\get-jwt.ps1` can retrieve a JWT for two different clients (hasura-admin and user-john-doe). To expand to add more users or claims, you can modify the `.\idp\clients.json` file and then run `.\scorched-earth.ps1` to rebuild the container image from scratch.
+- Token Endpoint - http://localhost:3000/token
+- Well Known Config - http://localhost:3000/.well-known/openid-configuration
+- JWK - http://localhost:3000/.well-known/jwks.json
 
 # Hasura DDN Helper Scripts
 It sometimes takes ALOT of DDN commands to execute on task, we've created some wrapper PowerShell scripts to assist with those items and to cut down on developer time / knowledge
