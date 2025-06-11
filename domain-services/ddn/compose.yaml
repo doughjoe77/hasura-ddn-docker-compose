@@ -14,6 +14,9 @@ services:
       INTROSPECTION_METADATA_FILE: /md/metadata.json
       METADATA_PATH: /md/open_dd.json
       OTLP_ENDPOINT: http://local.hasura.dev:4317
+      DDN_CACHE_ENABLED: "true"
+      DDN_CACHE_TTL: 300  # Cache expiration in seconds
+      DDN_CACHE_BACKEND: redis  # Use Redis for caching
     extra_hosts:
       - local.hasura.dev:host-gateway
     labels:
@@ -31,6 +34,12 @@ services:
       - 4318:4318
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+  
+  # redis cache, only for Hasura DDN engine ONLY, no public access to it
+  redis:
+    image: cgr.dev/chainguard/redis:latest
+    # ports:
+    #   - "6379:6379"
 
 networks:
   default:

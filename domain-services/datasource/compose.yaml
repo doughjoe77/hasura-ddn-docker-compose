@@ -109,6 +109,15 @@ services:
     ports:
       - "4000:4000"
 
+  idp:
+    container_name: idp
+    build: ../../idp
+    ports:
+      - "3000:3000"
+    environment:
+      JWT_SECRET: "n3XD9PrH6E6zPGZ2A9PuZ1W7scAL6H3x"
+      PORT: 3000
+
 networks:
   default:
     external:

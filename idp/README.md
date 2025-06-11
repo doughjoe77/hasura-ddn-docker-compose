@@ -1,0 +1,2 @@
+# Minimal OAuth IDP
+This is a very minimal IDP capable of doing client_credential OAuth flows to generate a JWT for this project that have Hasura specific claims in it. The script `.\get-jwt.ps1` can retreive a JWT for two different clients (hasura-admin and user-john-doe). To expand to add more users or claims, you can modify the clients.json file, run `.\scorched-earth.ps1` to rebuld the container image from scratch.
