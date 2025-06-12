@@ -24,6 +24,7 @@ It sometimes takes ALOT of DDN commands to execute on task, we've created some w
 <br>**NOTE**: When adding REST or GraphQL APIs, unlike Hasura 2.0 and Docker, the API URL you would use is not the internal name of the URL in Docker Compose, http://containername:4000/graphql for example, but instead MUST be accessible from your console, in my example the GraphQL API was resident at http://localhost:4000/graphql and I had to use that instead. If you don't do this your DDN file will fail to build. Post creation of the connector, you must change the `.env`, and run the `./start.ps1` again. You must do this each time you modify your custom GraphQL API endpoint to pick up those changes.
 - `\ddn-rebuild.ps1` - if you make an HML change and then want to see it immediately applied, run this command to rebuild your Super Graph and re-deploy those changes in Docker.
 <br>
+
 # Sample GraphQL Queries
 Just as a note, there are very ***slight*** differences between Hasura 2.0 and DDN GraphQL queries, the queries below return the same results but have a slightly different syntax.
 - Sample Hasura DDN Query
