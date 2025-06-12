@@ -61,9 +61,9 @@ query Customers20Query {
   }
 }
 ```
-- Sample Query 3 (Hasura 2.0, Remote Schema Custom GraphQL API)
+- Sample Query 3 (Hasura DDN & 2.0 compliant GraphQL query against a Remote Schema)
 ```gql
-query States20Query {
+query StatesQuery {
   states
 }
 ```
