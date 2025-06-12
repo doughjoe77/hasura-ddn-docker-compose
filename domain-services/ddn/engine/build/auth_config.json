@@ -1,11 +1,1 @@
-{
-    "version": "v3",
-    "definition": {
-        "mode": {
-            "noAuth": {
-                "role": "admin",
-                "sessionVariables": {}
-            }
-        }
-    }
-}
+{"version":"v3","definition":{"mode":{"jwt":{"audience":["local-hasura"],"issuer":"http://localhost:3000","allowedSkew":60,"claimsConfig":{"namespace":{"claimsFormat":"Json","location":"/claims.jwt.hasura.io"}},"tokenLocation":{"type":"BearerAuthorization"},"key":{"jwkFromUrl":"http://idp:3000/.well-known/jwks.json"}}}}}

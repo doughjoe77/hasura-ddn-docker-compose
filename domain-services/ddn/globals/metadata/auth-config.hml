@@ -2,6 +2,15 @@ kind: AuthConfig
 version: v3
 definition:
   mode:
-    noAuth:
-      role: admin
-      sessionVariables: {}
+    jwt:
+      claimsConfig:
+        namespace:
+          claimsFormat: Json
+          location: /claims.jwt.hasura.io
+      tokenLocation:
+        type: BearerAuthorization
+      key:
+        jwkFromUrl: http://idp:3000/.well-known/jwks.json
+      audience: ["local-hasura"]
+      allowedSkew: 60
+      issuer: http://localhost:3000

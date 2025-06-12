@@ -14,6 +14,10 @@ Hasura is authenticated to using JSON Web Tokens (JWT), in this project is a min
 - Well Known Config - http://localhost:3000/.well-known/openid-configuration
 - JWK - http://localhost:3000/.well-known/jwks.json
 
+To use the JWT in your GraphQL Query from the [local GraphiQL UI](http://localhost:3280/), paste it in the "Headers" tab like the image below using the format "Authorization": "Bearer |jwt from clipboard|":
+
+![GraphiQL using  JWT](./img/using-jwt-in-graphiql.png)
+
 # Hasura DDN Helper Scripts
 It sometimes takes ALOT of DDN commands to execute on task, we've created some wrapper PowerShell scripts to assist with those items and to cut down on developer time / knowledge
 - `.\ddn-add-connector.ps1` - wraps the 7 DDN commands used to add a new connector, apply that connector, and update your running Hasura DDN instance with that data. Running the command will kick off DDN in such a way that it will ask you what connector you want to add and then ask for the values needed to set that connector up. It will update your .env and any Hasura DDN metadata files.<br>**NOTE**: Names must start with a letter, followed by any letters, digits, or underscores.
@@ -61,27 +65,6 @@ query States20Query {
   states
 }
 ```
-# DDN CLI Cheat Sheet
-Quick collection of available DDN commands as of 6/2025, you can also run the command `ddn connector --help` to get more detailed help for a specific option. <br>
-**NOTE**: You MUST be in the `./domain-services/ddn` directory to run any of the following commands successfully.
-
-| Command              | Description                                                                                     | Example Usage                                                        |
-|----------------------|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
-| **auth**             | Manage authentication—log in or log out of the Hasura DDN CLI.                                  | `ddn auth login`                                                     |
-| **supergraph**       | Manage your Hasura DDN supergraph (project configuration, deployment, etc.).                    | `ddn supergraph init my-project`                                     |
-| **connector**        | Handle connector-related operations such as initialization and schema introspection.            | `ddn connector init my_connector`<br>`ddn connector introspect my_connector`<br>`ddn connector show-resources my_connector` |
-| **connector-link**   | Manage DataConnectorLink operations to link data sources.                                       | `ddn connector-link create my_link`                                  |
-| **model**            | Manage data models (the equivalent of tables/entities in your schema).                          | `ddn model list`                                                     |
-| **relationship**     | Define and manage relationships between models (e.g., array or object relationships).            | `ddn relationship create orders_customers`                           |
-| **subgraph**         | Perform operations on subgraphs—useful when modularizing your API into separate graph sections.  | `ddn subgraph add my_subgraph`                                       |
-| **codemod**          | Run codemod transformations to refactor or migrate your project’s configuration and metadata.     | `ddn codemod run`                                                    |
-| **run**              | Execute a custom script defined in your project's context.                                      | `ddn run seed`                                                       |
-| **completion**       | Generate autocompletion scripts for your shell (bash, zsh, etc.).                                 | `ddn completion bash`                                                |
-| **plugins**          | Manage CLI plugins that extend the core functionality of the DDN CLI.                           | `ddn plugins install plugin-name`                                    |
-| **config update-cli**| Update the Hasura DDN CLI to the latest (or a specified) version.                               | `ddn config update-cli --version latest`                             |
-| **version**          | Show the current version of the Hasura DDN CLI.                                                 | `ddn version`                                                        |
-| **help**             | Display help information for a command or the CLI as a whole.                                   | `ddn help` or `ddn [command] --help`                                   |
-
 # using Hasura 2.0 to develop for Hasura DDN
 While Hasura 2.0 has a robust UI for development (adding connectors, database objects, authorization, actions, remote schemas, etc.); Hasura DDN **ONLY** has an option for using YAML files to do the same type of work. Due to that, this project loads both Hasura 2.0 AND Hasura DDN and allows you to develop in 2.0 for DDN by exporting the 2.0 YAML files and converting them to DDN compliant YAML files. The following scripts are used to make this happen leveraging the Hasura 2.0 CLI:
 - `.\hasura20\load-metadata.ps1` - script will load 2.0 metadata contained in the `./hasura20/metadata` directory into the Hasura 2.0 instance running locally at http://localhost:8080, if you are running the project for the first time and want to load the Hasura 2.0 instance with metadata, run this command ***AFTER*** running `.\start.ps1`
@@ -93,8 +76,8 @@ While Hasura 2.0 has a robust UI for development (adding connectors, database ob
 - [Local Development Examples with different DBs](https://github.com/hasura/ddn-examples/blob/main/README.md)
 - [DDN CLI Installation](https://hasura.io/docs/3.0/reference/cli/installation/) - **REQUIRED** for Hasura DDV Development
 - [Hasura DDN VS Code Plugin](https://marketplace.visualstudio.com/items?itemName=HasuraHQ.hasura)
-- [GraphQL Reverse Proxy for cachning, rate limiting, etc.](https://github.com/magidandrew/hasura-enterprise-proxy)
 - [Connect DDN to Elasticsearch](https://hasura.io/docs/3.0/how-to-build-with-ddn/with-elasticsearch/)
+- [Setting up JWTs for OAuth in Hasura DDN](https://github.com/hasura/ddn-docs/blob/main/docs/auth/jwt/jwt-configuration.mdx)
 
 # Video Links
 - [Setup Hasura DDN in under 1 minute speed run](https://www.youtube.com/watch?v=OsO6TzwFb30)
@@ -103,4 +86,3 @@ While Hasura 2.0 has a robust UI for development (adding connectors, database ob
 - [Create Hasura generated REST APIs](https://www.youtube.com/watch?v=Iuxhjo7Ko9c)
 = [GraphQL Federation (v2 Remote Schemas) as a connector in DDN](https://www.youtube.com/watch?v=LJBTBIOB44U)
 - [Metadata Upgrade from Hasura 2.0 to DDN](https://hasura.io/docs/3.0/upgrade/overview/)
-

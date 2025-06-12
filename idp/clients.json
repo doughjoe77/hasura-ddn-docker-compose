@@ -5,7 +5,7 @@
     "claims": {
       "scope": "graphql-crud",
       "aud": "local-hasura",
-      "https://hasura.io/jwt/claims": {
+      "claims.jwt.hasura.io": {
         "x-hasura-default-role": "admin",
         "x-hasura-allowed-roles": ["admin","user"],
         "x-hasura-user-id": "admin"
@@ -18,7 +18,7 @@
     "claims": {
       "scope": "graphql-crud",
       "aud": "local-hasura",
-      "https://hasura.io/jwt/claims": {
+      "claims.jwt.hasura.io": {
         "x-hasura-default-role": "user",
         "x-hasura-allowed-roles": ["user"],
         "x-hasura-user-id": "john-doe"

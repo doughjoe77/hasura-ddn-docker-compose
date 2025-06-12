@@ -102,7 +102,7 @@ services:
       HASURA_GRAPHQL_JWT_SECRET: >
         {
           "jwk_url": "http://idp:3000/.well-known/jwks.json",
-          "claims_namespace": "https://hasura.io/jwt/claims",
+          "claims_namespace": "claims.jwt.hasura.io",
           "audience": "local-hasura"
         }
       HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: "naming_convention"

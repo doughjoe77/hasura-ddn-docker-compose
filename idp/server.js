@@ -50,6 +50,9 @@ app.get('/.well-known/jwks.json', (req, res) => {
   res.json({ keys: [jwk] });
 });
 
+// Define Key ID (should match the JWKS response)
+const KEY_ID = "1";
+
 // Token Endpoint supporting client_credentials flow.
 app.post('/token', (req, res) => {
   const { grant_type, client_id, client_secret, scope } = req.body;
@@ -67,6 +70,13 @@ app.post('/token', (req, res) => {
     return res.status(401).json({ error: 'invalid_client' });
   }
 
+  // Define custom header with "kid" ("kid" is required by Hasura DDN)
+  const header = {
+    alg: "HS256",
+    typ: "JWT",
+    kid: KEY_ID
+  };
+
   // Build a JWT payload with any preset claims from the client's configuration.
   // You can also add additional global claims here if needed.
   const payload = {
@@ -77,7 +87,8 @@ app.post('/token', (req, res) => {
   // Create a JWT token.
   const token = jwt.sign(payload, JWT_SECRET, {
     expiresIn: '1h',
-    issuer: `http://localhost:${port}`
+    issuer: `http://localhost:${port}`,
+    header
   });
 
   res.json({
