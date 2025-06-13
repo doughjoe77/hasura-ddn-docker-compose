@@ -1,0 +1,153 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: SecurityUsersToCustomers
+  fields:
+    - name: customerId
+      type: Uuid!
+    - name: userId
+      type: String_1!
+  graphql:
+    typeName: SecurityUsersToCustomers
+    inputTypeName: SecurityUsersToCustomersInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: security_users_to_customers
+      fieldMapping:
+        customerId:
+          column:
+            name: customer_id
+        userId:
+          column:
+            name: user_id
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: SecurityUsersToCustomers
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - customerId
+          - userId
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: SecurityUsersToCustomersBoolExp
+  operand:
+    object:
+      type: SecurityUsersToCustomers
+      comparableFields:
+        - fieldName: customerId
+          booleanExpressionType: UuidBoolExp
+        - fieldName: userId
+          booleanExpressionType: VarcharBoolExp
+      comparableRelationships:
+        - relationshipName: customer
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: SecurityUsersToCustomersBoolExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: SecurityUsersToCustomersAggExp
+  operand:
+    object:
+      aggregatedType: SecurityUsersToCustomers
+      aggregatableFields:
+        - fieldName: customerId
+          aggregateExpression: UuidAggExp
+        - fieldName: userId
+          aggregateExpression: VarcharAggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: SecurityUsersToCustomersAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: SecurityUsersToCustomersOrderByExp
+  operand:
+    object:
+      orderedType: SecurityUsersToCustomers
+      orderableFields:
+        - fieldName: customerId
+          orderByExpression: UuidOrderByExp
+        - fieldName: userId
+          orderByExpression: String1OrderByExp
+      orderableRelationships:
+        - relationshipName: customer
+  graphql:
+    expressionTypeName: SecurityUsersToCustomersOrderByExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: SecurityUsersToCustomers
+  objectType: SecurityUsersToCustomers
+  source:
+    dataConnectorName: my_pg
+    collection: security_users_to_customers
+  filterExpressionType: SecurityUsersToCustomersBoolExp
+  aggregateExpression: SecurityUsersToCustomersAggExp
+  orderByExpression: SecurityUsersToCustomersOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: securityUsersToCustomers
+      subscription:
+        rootField: securityUsersToCustomers
+    selectUniques:
+      - queryRootField: securityUsersToCustomersByPkUsersToCustomers
+        uniqueIdentifier:
+          - customerId
+          - userId
+        subscription:
+          rootField: securityUsersToCustomersByPkUsersToCustomers
+    filterInputTypeName: SecurityUsersToCustomersFilterInput
+    aggregate:
+      queryRootField: securityUsersToCustomersAggregate
+      subscription:
+        rootField: securityUsersToCustomersAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: SecurityUsersToCustomers
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+
+---
+kind: Relationship
+version: v1
+definition:
+  name: customer
+  sourceType: SecurityUsersToCustomers
+  target:
+    model:
+      name: Customers
+      relationshipType: Object
+  mapping:
+    - source:
+        fieldPath:
+          - fieldName: customerId
+      target:
+        modelField:
+          - fieldName: id
+

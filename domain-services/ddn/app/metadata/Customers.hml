@@ -45,7 +45,12 @@ definition:
           - firstName
           - id
           - lastName
-
+    - role: user
+      output:
+        allowedFields:
+          - email
+          - firstName
+          - lastName
 ---
 kind: AggregateExpression
 version: v1
@@ -128,6 +133,18 @@ definition:
       select:
         filter: null
         allowSubscriptions: true
+    - role: user
+      select: 
+        allowSubscriptions: true
+        filter: 
+          relationship:
+            name: securityUsersToCustomers
+            predicate: 
+              fieldComparison:
+                field: userId
+                operator: _eq
+                value: 
+                  sessionVariable: x-hasura-user-id
 
 ---
 kind: Relationship
@@ -170,10 +187,33 @@ definition:
           booleanExpressionType: VarcharBoolExp
       comparableRelationships:
         - relationshipName: orders
+        - relationshipName: securityUsersToCustomers
   logicalOperators:
     enable: true
   isNull:
     enable: true
   graphql:
     typeName: CustomersBoolExp
+
+---
+kind: Relationship
+version: v1
+definition:
+  name: securityUsersToCustomers
+  sourceType: Customers
+  target:
+    model:
+      name: SecurityUsersToCustomers
+      relationshipType: Array
+      aggregate:
+        aggregateExpression: SecurityUsersToCustomersAggExp
+  mapping:
+    - source:
+        fieldPath:
+          - fieldName: id
+      target:
+        modelField:
+          - fieldName: customerId
+  graphql:
+    aggregateFieldName: securityUsersToCustomersAggregate
 

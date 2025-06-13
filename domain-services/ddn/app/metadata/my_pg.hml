@@ -690,6 +690,21 @@ definition:
                   name: products
                   type: named
                 type: array
+        delete_security_users_to_customers_by_customer_id_and_user_id_response:
+          description: Responses from the 'delete_security_users_to_customers_by_customer_id_and_user_id' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: security_users_to_customers
+                  type: named
+                type: array
         insert_customers_object:
           fields:
             email:
@@ -846,6 +861,31 @@ definition:
                   name: products
                   type: named
                 type: array
+        insert_security_users_to_customers_object:
+          fields:
+            customer_id:
+              type:
+                name: uuid
+                type: named
+            user_id:
+              type:
+                name: varchar
+                type: named
+        insert_security_users_to_customers_response:
+          description: Responses from the 'insert_security_users_to_customers' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: security_users_to_customers
+                  type: named
+                type: array
         order_items:
           fields:
             id:
@@ -918,6 +958,16 @@ definition:
                 underlying_type:
                   name: int4
                   type: named
+        security_users_to_customers:
+          fields:
+            customer_id:
+              type:
+                name: uuid
+                type: named
+            user_id:
+              type:
+                name: varchar
+                type: named
         update_column_customers_email:
           description: Update the 'email' column in the 'customers' collection
           fields:
@@ -1070,6 +1120,22 @@ definition:
                 underlying_type:
                   name: int4
                   type: named
+        update_column_security_users_to_customers_customer_id:
+          description: Update the 'customer_id' column in the 'security_users_to_customers' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                name: uuid
+                type: named
+        update_column_security_users_to_customers_user_id:
+          description: Update the 'user_id' column in the 'security_users_to_customers' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                name: varchar
+                type: named
         update_customers_by_id_response:
           description: Responses from the 'update_customers_by_id' procedure
           fields:
@@ -1254,6 +1320,38 @@ definition:
                 underlying_type:
                   name: update_column_products_stock
                   type: named
+        update_security_users_to_customers_by_customer_id_and_user_id_response:
+          description: Responses from the 'update_security_users_to_customers_by_customer_id_and_user_id' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: security_users_to_customers
+                  type: named
+                type: array
+        update_security_users_to_customers_by_customer_id_and_user_id_update_columns:
+          description: Update the columns of the 'security_users_to_customers' collection
+          fields:
+            customer_id:
+              description: Update the 'customer_id' column in the 'security_users_to_customers' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_security_users_to_customers_customer_id
+                  type: named
+            user_id:
+              description: Update the 'user_id' column in the 'security_users_to_customers' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_security_users_to_customers_user_id
+                  type: named
       collections:
         - name: customers
           arguments: {}
@@ -1299,6 +1397,19 @@ definition:
               unique_columns:
                 - id
           foreign_keys: {}
+        - name: security_users_to_customers
+          arguments: {}
+          type: security_users_to_customers
+          uniqueness_constraints:
+            pk_users_to_customers:
+              unique_columns:
+                - customer_id
+                - user_id
+          foreign_keys:
+            fk_users_to_customers:
+              column_mapping:
+                customer_id: id
+              foreign_collection: customers
       functions: []
       procedures:
         - name: delete_customers_by_id
@@ -1368,6 +1479,27 @@ definition:
                   type: predicate
           result_type:
             name: delete_products_by_id_response
+            type: named
+        - name: delete_security_users_to_customers_by_customer_id_and_user_id
+          description: Delete any row on the 'security_users_to_customers' collection using the 'customer_id' and 'user_id' keys
+          arguments:
+            key_customer_id:
+              type:
+                name: uuid
+                type: named
+            key_user_id:
+              type:
+                name: varchar
+                type: named
+            pre_check:
+              description: Delete permission predicate over the 'security_users_to_customers' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: security_users_to_customers
+                  type: predicate
+          result_type:
+            name: delete_security_users_to_customers_by_customer_id_and_user_id_response
             type: named
         - name: insert_customers
           description: Insert into the customers table
@@ -1444,6 +1576,25 @@ definition:
                   type: predicate
           result_type:
             name: insert_products_response
+            type: named
+        - name: insert_security_users_to_customers
+          description: Insert into the security_users_to_customers table
+          arguments:
+            objects:
+              type:
+                element_type:
+                  name: insert_security_users_to_customers_object
+                  type: named
+                type: array
+            post_check:
+              description: Insert permission predicate over the 'security_users_to_customers' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: security_users_to_customers
+                  type: predicate
+          result_type:
+            name: insert_security_users_to_customers_response
             type: named
         - name: update_customers_by_id
           description: Update any row on the 'customers' collection using the 'id' key
@@ -1556,6 +1707,38 @@ definition:
                 type: named
           result_type:
             name: update_products_by_id_response
+            type: named
+        - name: update_security_users_to_customers_by_customer_id_and_user_id
+          description: Update any row on the 'security_users_to_customers' collection using the 'customer_id' and 'user_id' keys
+          arguments:
+            key_customer_id:
+              type:
+                name: uuid
+                type: named
+            key_user_id:
+              type:
+                name: varchar
+                type: named
+            post_check:
+              description: Update permission post-condition predicate over the 'security_users_to_customers' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: security_users_to_customers
+                  type: predicate
+            pre_check:
+              description: Update permission pre-condition predicate over the 'security_users_to_customers' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: security_users_to_customers
+                  type: predicate
+            update_columns:
+              type:
+                name: update_security_users_to_customers_by_customer_id_and_user_id_update_columns
+                type: named
+          result_type:
+            name: update_security_users_to_customers_by_customer_id_and_user_id_response
             type: named
     capabilities:
       version: 0.1.6

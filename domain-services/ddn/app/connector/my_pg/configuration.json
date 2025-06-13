@@ -218,6 +218,44 @@
         },
         "foreignRelations": {},
         "description": null
+      },
+      "security_users_to_customers": {
+        "schemaName": "security",
+        "tableName": "users_to_customers",
+        "columns": {
+          "customer_id": {
+            "name": "customer_id",
+            "type": {
+              "scalarType": "uuid"
+            },
+            "nullable": "nonNullable",
+            "description": null
+          },
+          "user_id": {
+            "name": "user_id",
+            "type": {
+              "scalarType": "varchar"
+            },
+            "nullable": "nonNullable",
+            "description": null
+          }
+        },
+        "uniquenessConstraints": {
+          "pk_users_to_customers": [
+            "customer_id",
+            "user_id"
+          ]
+        },
+        "foreignRelations": {
+          "fk_users_to_customers": {
+            "foreignSchema": "public",
+            "foreignTable": "customers",
+            "columnMapping": {
+              "customer_id": "id"
+            }
+          }
+        },
+        "description": null
       }
     },
     "types": {
