@@ -646,4 +646,24 @@ INSERT INTO order_items (id, order_id, product_id, quantity) VALUES
 ('3f456d6b-3d38-409f-8c45-8a8cdd1a0a8b', '379f1bf7-0e77-4a33-adb4-20e75fb7a159', 'e52b9a12-a976-4f4d-b961-db1eb9250b4a', 4),
 ('4c26e100-9505-486e-9384-f7804c13cde3', '379f1bf7-0e77-4a33-adb4-20e75fb7a159', 'c2f9f099-3619-4e33-b1f5-02271e509ac6', 5);
 
+--> add security / authorization related tables and load a single user's worth of data into it
+create schema IF NOT EXISTS security;
+
+CREATE TABLE IF NOT EXISTS security.users_to_customers
+(
+    user_id varchar(30) not null,
+    customer_id uuid not null,
+	constraint pk_users_to_customers primary key (user_id, customer_id)
+);
+
+alter table security.users_to_customers 
+  add constraint fk_users_to_customers FOREIGN KEY (customer_id) REFERENCES customers(id);
+
+insert into security.users_to_customers
+(user_id, customer_id)
+select cast('john-doe' as varchar(30)) as user_id, id as customer_id 
+from customers
+order by id
+limit 10;
+
 CREATE DATABASE metadata;

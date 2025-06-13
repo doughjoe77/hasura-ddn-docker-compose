@@ -2,3 +2,4 @@
 - "!include public_order_items.yaml"
 - "!include public_orders.yaml"
 - "!include public_products.yaml"
+- "!include security_users_to_customers.yaml"

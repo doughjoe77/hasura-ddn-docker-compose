@@ -9,3 +9,23 @@ array_relationships:
         table:
           name: orders
           schema: public
+  - name: usersToCustomers
+    using:
+      foreign_key_constraint_on:
+        column: customer_id
+        table:
+          name: users_to_customers
+          schema: security
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - email
+        - first_name
+        - last_name
+      filter:
+        usersToCustomers:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+    comment: ""

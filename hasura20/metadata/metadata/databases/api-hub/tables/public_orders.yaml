@@ -5,6 +5,15 @@ object_relationships:
   - name: customer
     using:
       foreign_key_constraint_on: customer_id
+  - name: security
+    using:
+      manual_configuration:
+        column_mapping:
+          customer_id: customer_id
+        insertion_order: null
+        remote_table:
+          name: users_to_customers
+          schema: security
 array_relationships:
   - name: orderItems
     using:
@@ -13,3 +22,15 @@ array_relationships:
         table:
           name: order_items
           schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - order_date
+        - total_amount
+      filter:
+        security:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+    comment: ""
