@@ -69,23 +69,19 @@ query StatesQuery {
 ```
 
 # Observing Authorization
-If you are logging in as a Hasura Admin role, you have unfettred access to the whole Graph. I've created a second role called `user` which limits what can be viewed in the Graph, and also has row level filtering placed on it (that's stored in the Postgres table `security.user_to_customer`). You can obtain a JWT using the `user-john-doe` option when running `.\get-jwt.ps1`. You must also set the Header for `x-hasura-role` to `user` so Hasura knows what security context you are in. Try both the query below, first as an Admin, then as the `john-doe` User and you will see the queries return different counts:
+If you are logging in as a Hasura Admin role, you have unfettered access to the whole Graph. I've created a second role called `user` which limits what can be viewed in the Graph and has row level filtering placed on it (that's stored in the Postgres table `security.user_to_customer`). You can obtain a JWT using the `user-john-doe` option when running `.\get-jwt.ps1`. You must also set the Header for `x-hasura-role` to `user` so Hasura knows what security context you are in. Try both the query below, first as an Admin, then as the `john-doe` User and you will see the queries return different counts:
 ``` gql
-# Hasura 2.0 version of the query (for an Admin both counts will be 100,
-# for a User the counts will be 10 and 15 for the john-doe user)
+# Hasura 2.0 version of the query (for an Admin the count will be 100,
+# for the user-john-doe User the count will be 10)
 query QueryHasura20CustomerOrderCountsForUserRoleUser {
   customersAggregate {
     aggregate {
       count
     }
   }
-  ordersAggregate {
-    aggregate {
-      count
-    }
-  }
 }
 ```
+
 
 # using Hasura 2.0 to develop for Hasura DDN
 While Hasura 2.0 has a robust UI for development (adding connectors, database objects, authorization, actions, remote schemas, etc.); Hasura DDN **ONLY** has an option for using YAML files to do the same type of work. Due to that, this project loads both Hasura 2.0 AND Hasura DDN and allows you to develop in 2.0 for DDN by exporting the 2.0 YAML files and converting them to DDN compliant YAML files. The following scripts are used to make this happen leveraging the Hasura 2.0 CLI:
