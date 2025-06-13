@@ -71,9 +71,14 @@ query StatesQuery {
 # Observing Authorization
 If you are logging in as a Hasura Admin role, you have unfettered access to the whole Graph. I've created a second role called `user` which limits what can be viewed in the Graph and has row level filtering placed on it (that's stored in the Postgres table `security.user_to_customer`). You can obtain a JWT using the `user-john-doe` option when running `.\get-jwt.ps1`. You must also set the Header for `x-hasura-role` to `user` so Hasura knows what security context you are in. Try both the query below, first as an Admin, then as the `john-doe` User and you will see the queries return different counts:
 ``` gql
-# Hasura 2.0 version of the query (for an Admin the count will be 100,
-# for the user-john-doe User the count will be 10)
-query QueryHasura20CustomerOrderCountsForUserRoleUser {
+# for an Admin the count will be 100, for the user-john-doe User the count will be 10
+query QueryHasuraDDNCustomerCount {
+  customersAggregate {
+    _count
+  }
+}
+# same query in Hasura 2.0
+query QueryHasura20CustomerCount {
   customersAggregate {
     aggregate {
       count
