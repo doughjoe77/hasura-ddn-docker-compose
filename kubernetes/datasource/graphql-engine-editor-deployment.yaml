@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: graphql-engine-editor
+  name: graphql-engine-editor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: graphql-engine-editor
+  template:
+    metadata:
+      labels:
+        io.kompose.service: graphql-engine-editor
+    spec:
+      containers:
+        - env:
+            - name: API_HUB
+              value: postgres://postgres:postgres@postgres:5432/postgres
+            - name: HASURA_GRAPHQL_ADMIN_SECRET
+              value: "123456"
+            - name: HASURA_GRAPHQL_DEV_MODE
+              value: "true"
+            - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+              value: "true"
+            - name: HASURA_GRAPHQL_ENABLE_REMOTE_SCHEMA_PERMISSIONS
+              value: "true"
+            - name: HASURA_GRAPHQL_EXPERIMENTAL_FEATURES
+              value: naming_convention
+            - name: HASURA_GRAPHQL_JWT_SECRET
+              value: |
+                {
+                  "jwk_url": "http://idp:3000/.well-known/jwks.json",
+                  "claims_namespace": "claims.jwt.hasura.io",
+                  "audience": "local-hasura"
+                }
+            - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
+              value: postgres://postgres:postgres@postgres:5432/metadata
+          image: hasura/graphql-engine:latest
+          name: graphql-engine-editor
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always

@@ -1,0 +1,25 @@
+apiVersion: v1
+data:
+  servers.json: |-
+    {
+        "Servers": {
+            "1": {
+                "Name": "Application DB Server",
+                "Group": "Servers",
+                "Host": "postgres",
+                "Port": 5432,
+                "MaintenanceDB": "postgres",
+                "Username": "postgres",
+                "PassFile": "/home/pgadmin/.pgpass",
+                "SSLMode": "prefer"
+            }
+        }
+    }
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    io.kompose.service: pgadmin
+  name: pgadmin-cm0
+  namespace: datasource

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: sample-gql
+  name: sample-gql
+  namespace: datasource
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: sample-gql
+  template:
+    metadata:
+      labels:
+        io.kompose.service: sample-gql
+    spec:
+      containers:
+        - image: doughjoe77/datasource-sample-gql:latest
+          name: sample-gql
+          ports:
+            - containerPort: 4000
+              protocol: TCP
+      restartPolicy: Always

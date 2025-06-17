@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: datasource-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - host: datasource.local
+      http:
+        paths:
+          - path: /gql
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-gql
+                port:
+                  number: 4000
+          - path: /hasura20
+            pathType: Prefix
+            backend:
+              service:
+                name: hasura20
+                port:
+                  number: 8080
+          - path: /idp
+            pathType: Prefix
+            backend:
+              service:
+                name: idp
+                port:
+                  number: 3000
+          - path: /pgadmin
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin
+                port:
+                  number: 8889

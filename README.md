@@ -18,6 +18,9 @@ To use the JWT in your GraphQL Query from the [local GraphiQL UI](http://localho
 
 ![GraphiQL using  JWT](./img/using-jwt-in-graphiql.png)
 
+# Running in Kubernetes
+Still a WIP, but I'm building out a set of scripts to run on Docker Desktop's local Kubernetes instance.  To run that script please execute the file `start-k8ts.ps1`, to destroy everything you have running in Kubernetes for this project, run the command `scorched-earth-k8ts.ps1`. Currently only part of the "datasource" comes up and is inaccessible locally at the moment (still a work-in-progress).
+
 # Hasura DDN Helper Scripts
 It sometimes takes ALOT of DDN commands to execute on task, we've created some wrapper PowerShell scripts to assist with those items and to cut down on developer time / knowledge
 - `.\ddn-add-connector.ps1` - wraps the 7 DDN commands used to add a new connector, apply that connector, and update your running Hasura DDN instance with that data. Running the command will kick off DDN in such a way that it will ask you what connector you want to add and then ask for the values needed to set that connector up. It will update your .env and any Hasura DDN metadata files.<br>**NOTE**: Names must start with a letter, followed by any letters, digits, or underscores.
