@@ -667,3 +667,215 @@ definition:
   graphql:
     typeName: Int8BoolExp
 
+---
+kind: ScalarType
+version: v1
+definition:
+  name: Jsonb
+  graphql:
+    typeName: Jsonb
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: JsonbBoolExp
+  operand:
+    scalar:
+      type: Jsonb
+      comparisonOperators:
+        - name: _eq
+          argumentType: Jsonb!
+        - name: _gt
+          argumentType: Jsonb!
+        - name: _gte
+          argumentType: Jsonb!
+        - name: _in
+          argumentType: "[Jsonb!]!"
+        - name: _lt
+          argumentType: Jsonb!
+        - name: _lte
+          argumentType: Jsonb!
+        - name: _neq
+          argumentType: Jsonb!
+        - name: jsonb_contained
+          argumentType: Jsonb!
+        - name: jsonb_contains
+          argumentType: Jsonb!
+        - name: jsonb_exists
+          argumentType: String_1!
+      dataConnectorOperatorMapping:
+        - dataConnectorName: my_pg
+          dataConnectorScalarType: jsonb
+          operatorMapping: {}
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: JsonbBoolExp
+
+---
+kind: DataConnectorScalarRepresentation
+version: v1
+definition:
+  dataConnectorName: my_pg
+  dataConnectorScalarType: jsonb
+  representation: Jsonb
+  graphql:
+    comparisonExpressionTypeName: JsonbComparisonExp
+
+---
+kind: ScalarType
+version: v1
+definition:
+  name: Timestamp
+  graphql:
+    typeName: Timestamp
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: TimestampBoolExp
+  operand:
+    scalar:
+      type: Timestamp
+      comparisonOperators:
+        - name: _eq
+          argumentType: Timestamp!
+        - name: _gt
+          argumentType: Timestamp!
+        - name: _gte
+          argumentType: Timestamp!
+        - name: _in
+          argumentType: "[Timestamp!]!"
+        - name: _lt
+          argumentType: Timestamp!
+        - name: _lte
+          argumentType: Timestamp!
+        - name: _neq
+          argumentType: Timestamp!
+      dataConnectorOperatorMapping:
+        - dataConnectorName: my_pg
+          dataConnectorScalarType: timestamp
+          operatorMapping: {}
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: TimestampBoolExp
+
+---
+kind: DataConnectorScalarRepresentation
+version: v1
+definition:
+  dataConnectorName: my_pg
+  dataConnectorScalarType: timestamp
+  representation: Timestamp
+  graphql:
+    comparisonExpressionTypeName: TimestampComparisonExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: JsonbAggExp
+  operand:
+    scalar:
+      aggregatedType: Jsonb
+      aggregationFunctions: []
+      dataConnectorAggregationFunctionMapping:
+        - dataConnectorName: my_pg
+          dataConnectorScalarType: jsonb
+          functionMapping: {}
+  count:
+    enable: true
+  countDistinct:
+    enable: true
+  graphql:
+    selectTypeName: JsonbAggExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: TimestampAggExp
+  operand:
+    scalar:
+      aggregatedType: Timestamp
+      aggregationFunctions:
+        - name: max
+          returnType: Timestamp
+        - name: min
+          returnType: Timestamp
+      dataConnectorAggregationFunctionMapping:
+        - dataConnectorName: my_pg
+          dataConnectorScalarType: timestamp
+          functionMapping:
+            max:
+              name: max
+            min:
+              name: min
+  count:
+    enable: true
+  countDistinct:
+    enable: true
+  graphql:
+    selectTypeName: TimestampAggExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: TextAggExp
+  operand:
+    scalar:
+      aggregatedType: String_1
+      aggregationFunctions:
+        - name: max
+          returnType: String_1
+        - name: min
+          returnType: String_1
+      dataConnectorAggregationFunctionMapping:
+        - dataConnectorName: my_pg
+          dataConnectorScalarType: text
+          functionMapping:
+            max:
+              name: max
+            min:
+              name: min
+  count:
+    enable: true
+  countDistinct:
+    enable: true
+  graphql:
+    selectTypeName: TextAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: JsonbOrderByExp
+  operand:
+    scalar:
+      orderedType: Jsonb
+      enableOrderByDirections:
+        enableAll: true
+  graphql:
+    expressionTypeName: JsonbOrderByExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: TimestampOrderByExp
+  operand:
+    scalar:
+      orderedType: Timestamp
+      enableOrderByDirections:
+        enableAll: true
+  graphql:
+    expressionTypeName: TimestampOrderByExp
+

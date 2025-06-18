@@ -1,0 +1,168 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: OtelLogs
+  fields:
+    - name: attributes
+      type: Jsonb
+    - name: createdAt
+      type: Timestamp
+    - name: id
+      type: Int32!
+    - name: level
+      type: String_1!
+    - name: message
+      type: String_1!
+  graphql:
+    typeName: OtelLogs
+    inputTypeName: OtelLogsInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: otel_logs
+      fieldMapping:
+        attributes:
+          column:
+            name: attributes
+        createdAt:
+          column:
+            name: created_at
+        id:
+          column:
+            name: id
+        level:
+          column:
+            name: level
+        message:
+          column:
+            name: message
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: OtelLogs
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - attributes
+          - createdAt
+          - id
+          - level
+          - message
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: OtelLogsBoolExp
+  operand:
+    object:
+      type: OtelLogs
+      comparableFields:
+        - fieldName: attributes
+          booleanExpressionType: JsonbBoolExp
+        - fieldName: createdAt
+          booleanExpressionType: TimestampBoolExp
+        - fieldName: id
+          booleanExpressionType: Int4BoolExp
+        - fieldName: level
+          booleanExpressionType: TextBoolExp
+        - fieldName: message
+          booleanExpressionType: TextBoolExp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: OtelLogsBoolExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: OtelLogsAggExp
+  operand:
+    object:
+      aggregatedType: OtelLogs
+      aggregatableFields:
+        - fieldName: attributes
+          aggregateExpression: JsonbAggExp
+        - fieldName: createdAt
+          aggregateExpression: TimestampAggExp
+        - fieldName: id
+          aggregateExpression: Int4AggExp
+        - fieldName: level
+          aggregateExpression: TextAggExp
+        - fieldName: message
+          aggregateExpression: TextAggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: OtelLogsAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: OtelLogsOrderByExp
+  operand:
+    object:
+      orderedType: OtelLogs
+      orderableFields:
+        - fieldName: attributes
+          orderByExpression: JsonbOrderByExp
+        - fieldName: createdAt
+          orderByExpression: TimestampOrderByExp
+        - fieldName: id
+          orderByExpression: Int32OrderByExp
+        - fieldName: level
+          orderByExpression: String1OrderByExp
+        - fieldName: message
+          orderByExpression: String1OrderByExp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: OtelLogsOrderByExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: OtelLogs
+  objectType: OtelLogs
+  source:
+    dataConnectorName: my_pg
+    collection: otel_logs
+  filterExpressionType: OtelLogsBoolExp
+  aggregateExpression: OtelLogsAggExp
+  orderByExpression: OtelLogsOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: otelLogs
+      subscription:
+        rootField: otelLogs
+    selectUniques:
+      - queryRootField: otelLogsById
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: otelLogsById
+    filterInputTypeName: OtelLogsFilterInput
+    aggregate:
+      queryRootField: otelLogsAggregate
+      subscription:
+        rootField: otelLogsAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: OtelLogs
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

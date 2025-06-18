@@ -285,6 +285,53 @@ definition:
               argument_type:
                 name: int8
                 type: named
+        jsonb:
+          aggregate_functions: {}
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: custom
+              argument_type:
+                name: jsonb
+                type: named
+            _gte:
+              type: custom
+              argument_type:
+                name: jsonb
+                type: named
+            _in:
+              type: in
+            _lt:
+              type: custom
+              argument_type:
+                name: jsonb
+                type: named
+            _lte:
+              type: custom
+              argument_type:
+                name: jsonb
+                type: named
+            _neq:
+              type: custom
+              argument_type:
+                name: jsonb
+                type: named
+            jsonb_contained:
+              type: custom
+              argument_type:
+                name: jsonb
+                type: named
+            jsonb_contains:
+              type: custom
+              argument_type:
+                name: jsonb
+                type: named
+            jsonb_exists:
+              type: custom
+              argument_type:
+                name: text
+                type: named
         numeric:
           representation:
             type: bigdecimal
@@ -474,6 +521,52 @@ definition:
               type: custom
               argument_type:
                 name: text
+                type: named
+        timestamp:
+          representation:
+            type: timestamp
+          aggregate_functions:
+            max:
+              result_type:
+                type: nullable
+                underlying_type:
+                  name: timestamp
+                  type: named
+            min:
+              result_type:
+                type: nullable
+                underlying_type:
+                  name: timestamp
+                  type: named
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: custom
+              argument_type:
+                name: timestamp
+                type: named
+            _gte:
+              type: custom
+              argument_type:
+                name: timestamp
+                type: named
+            _in:
+              type: in
+            _lt:
+              type: custom
+              argument_type:
+                name: timestamp
+                type: named
+            _lte:
+              type: custom
+              argument_type:
+                name: timestamp
+                type: named
+            _neq:
+              type: custom
+              argument_type:
+                name: timestamp
                 type: named
         uuid:
           representation:
@@ -675,6 +768,21 @@ definition:
                   name: orders
                   type: named
                 type: array
+        delete_otel_logs_by_id_response:
+          description: Responses from the 'delete_otel_logs_by_id' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: otel_logs
+                  type: named
+                type: array
         delete_products_by_id_response:
           description: Responses from the 'delete_products_by_id' procedure
           fields:
@@ -822,6 +930,49 @@ definition:
                   name: orders
                   type: named
                 type: array
+        insert_otel_logs_object:
+          fields:
+            attributes:
+              type:
+                type: nullable
+                underlying_type:
+                  name: jsonb
+                  type: named
+            created_at:
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp
+                  type: named
+            id:
+              type:
+                type: nullable
+                underlying_type:
+                  name: int4
+                  type: named
+            level:
+              type:
+                name: text
+                type: named
+            message:
+              type:
+                name: text
+                type: named
+        insert_otel_logs_response:
+          description: Responses from the 'insert_otel_logs' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: otel_logs
+                  type: named
+                type: array
         insert_products_object:
           fields:
             id:
@@ -934,6 +1085,32 @@ definition:
                 underlying_type:
                   name: numeric
                   type: named
+        otel_logs:
+          fields:
+            attributes:
+              type:
+                type: nullable
+                underlying_type:
+                  name: jsonb
+                  type: named
+            created_at:
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp
+                  type: named
+            id:
+              type:
+                name: int4
+                type: named
+            level:
+              type:
+                name: text
+                type: named
+            message:
+              type:
+                name: text
+                type: named
         products:
           fields:
             id:
@@ -1082,6 +1259,50 @@ definition:
                 underlying_type:
                   name: numeric
                   type: named
+        update_column_otel_logs_attributes:
+          description: Update the 'attributes' column in the 'otel_logs' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: jsonb
+                  type: named
+        update_column_otel_logs_created_at:
+          description: Update the 'created_at' column in the 'otel_logs' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp
+                  type: named
+        update_column_otel_logs_id:
+          description: Update the 'id' column in the 'otel_logs' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                name: int4
+                type: named
+        update_column_otel_logs_level:
+          description: Update the 'level' column in the 'otel_logs' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                name: text
+                type: named
+        update_column_otel_logs_message:
+          description: Update the 'message' column in the 'otel_logs' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                name: text
+                type: named
         update_column_products_id:
           description: Update the 'id' column in the 'products' collection
           fields:
@@ -1274,6 +1495,59 @@ definition:
                 underlying_type:
                   name: update_column_orders_total_amount
                   type: named
+        update_otel_logs_by_id_response:
+          description: Responses from the 'update_otel_logs_by_id' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: otel_logs
+                  type: named
+                type: array
+        update_otel_logs_by_id_update_columns:
+          description: Update the columns of the 'otel_logs' collection
+          fields:
+            attributes:
+              description: Update the 'attributes' column in the 'otel_logs' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_logs_attributes
+                  type: named
+            created_at:
+              description: Update the 'created_at' column in the 'otel_logs' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_logs_created_at
+                  type: named
+            id:
+              description: Update the 'id' column in the 'otel_logs' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_logs_id
+                  type: named
+            level:
+              description: Update the 'level' column in the 'otel_logs' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_logs_level
+                  type: named
+            message:
+              description: Update the 'message' column in the 'otel_logs' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_logs_message
+                  type: named
         update_products_by_id_response:
           description: Responses from the 'update_products_by_id' procedure
           fields:
@@ -1389,6 +1663,14 @@ definition:
               column_mapping:
                 customer_id: id
               foreign_collection: customers
+        - name: otel_logs
+          arguments: {}
+          type: otel_logs
+          uniqueness_constraints:
+            logs_pkey:
+              unique_columns:
+                - id
+          foreign_keys: {}
         - name: products
           arguments: {}
           type: products
@@ -1462,6 +1744,23 @@ definition:
                   type: predicate
           result_type:
             name: delete_orders_by_id_response
+            type: named
+        - name: delete_otel_logs_by_id
+          description: Delete any row on the 'otel_logs' collection using the 'id' key
+          arguments:
+            key_id:
+              type:
+                name: int4
+                type: named
+            pre_check:
+              description: Delete permission predicate over the 'otel_logs' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: otel_logs
+                  type: predicate
+          result_type:
+            name: delete_otel_logs_by_id_response
             type: named
         - name: delete_products_by_id
           description: Delete any row on the 'products' collection using the 'id' key
@@ -1557,6 +1856,25 @@ definition:
                   type: predicate
           result_type:
             name: insert_orders_response
+            type: named
+        - name: insert_otel_logs
+          description: Insert into the otel_logs table
+          arguments:
+            objects:
+              type:
+                element_type:
+                  name: insert_otel_logs_object
+                  type: named
+                type: array
+            post_check:
+              description: Insert permission predicate over the 'otel_logs' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: otel_logs
+                  type: predicate
+          result_type:
+            name: insert_otel_logs_response
             type: named
         - name: insert_products
           description: Insert into the products table
@@ -1679,6 +1997,34 @@ definition:
                 type: named
           result_type:
             name: update_orders_by_id_response
+            type: named
+        - name: update_otel_logs_by_id
+          description: Update any row on the 'otel_logs' collection using the 'id' key
+          arguments:
+            key_id:
+              type:
+                name: int4
+                type: named
+            post_check:
+              description: Update permission post-condition predicate over the 'otel_logs' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: otel_logs
+                  type: predicate
+            pre_check:
+              description: Update permission pre-condition predicate over the 'otel_logs' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: otel_logs
+                  type: predicate
+            update_columns:
+              type:
+                name: update_otel_logs_by_id_update_columns
+                type: named
+          result_type:
+            name: update_otel_logs_by_id_response
             type: named
         - name: update_products_by_id
           description: Update any row on the 'products' collection using the 'id' key

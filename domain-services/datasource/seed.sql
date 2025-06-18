@@ -666,4 +666,13 @@ from customers
 order by id
 limit 10;
 
+create schema if not exists otel;
+CREATE TABLE IF NOT EXISTS otel.logs (
+    id SERIAL PRIMARY KEY,
+    level TEXT NOT NULL,
+    message TEXT NOT NULL,
+    attributes JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE DATABASE metadata;
