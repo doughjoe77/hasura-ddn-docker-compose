@@ -1,0 +1,216 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: OtelTraces
+  fields:
+    - name: attributes
+      type: Jsonb
+    - name: createdAt
+      type: Timestamptz
+    - name: endTime
+      type: Timestamptz
+    - name: id
+      type: Int32!
+    - name: name
+      type: String_1
+    - name: parentSpanId
+      type: String_1
+    - name: spanId
+      type: String_1
+    - name: startTime
+      type: Timestamptz
+    - name: traceId
+      type: String_1
+  graphql:
+    typeName: OtelTraces
+    inputTypeName: OtelTracesInput
+  dataConnectorTypeMapping:
+    - dataConnectorName: my_pg
+      dataConnectorObjectType: otel_traces
+      fieldMapping:
+        attributes:
+          column:
+            name: attributes
+        createdAt:
+          column:
+            name: created_at
+        endTime:
+          column:
+            name: end_time
+        id:
+          column:
+            name: id
+        name:
+          column:
+            name: name
+        parentSpanId:
+          column:
+            name: parent_span_id
+        spanId:
+          column:
+            name: span_id
+        startTime:
+          column:
+            name: start_time
+        traceId:
+          column:
+            name: trace_id
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: OtelTraces
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - attributes
+          - createdAt
+          - endTime
+          - id
+          - name
+          - parentSpanId
+          - spanId
+          - startTime
+          - traceId
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: OtelTracesBoolExp
+  operand:
+    object:
+      type: OtelTraces
+      comparableFields:
+        - fieldName: attributes
+          booleanExpressionType: JsonbBoolExp
+        - fieldName: createdAt
+          booleanExpressionType: TimestamptzBoolExp
+        - fieldName: endTime
+          booleanExpressionType: TimestamptzBoolExp
+        - fieldName: id
+          booleanExpressionType: Int4BoolExp
+        - fieldName: name
+          booleanExpressionType: TextBoolExp
+        - fieldName: parentSpanId
+          booleanExpressionType: TextBoolExp
+        - fieldName: spanId
+          booleanExpressionType: TextBoolExp
+        - fieldName: startTime
+          booleanExpressionType: TimestamptzBoolExp
+        - fieldName: traceId
+          booleanExpressionType: TextBoolExp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: OtelTracesBoolExp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: OtelTracesAggExp
+  operand:
+    object:
+      aggregatedType: OtelTraces
+      aggregatableFields:
+        - fieldName: attributes
+          aggregateExpression: JsonbAggExp
+        - fieldName: createdAt
+          aggregateExpression: TimestamptzAggExp
+        - fieldName: endTime
+          aggregateExpression: TimestamptzAggExp
+        - fieldName: id
+          aggregateExpression: Int4AggExp
+        - fieldName: name
+          aggregateExpression: TextAggExp
+        - fieldName: parentSpanId
+          aggregateExpression: TextAggExp
+        - fieldName: spanId
+          aggregateExpression: TextAggExp
+        - fieldName: startTime
+          aggregateExpression: TimestamptzAggExp
+        - fieldName: traceId
+          aggregateExpression: TextAggExp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: OtelTracesAggExp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: OtelTracesOrderByExp
+  operand:
+    object:
+      orderedType: OtelTraces
+      orderableFields:
+        - fieldName: attributes
+          orderByExpression: JsonbOrderByExp
+        - fieldName: createdAt
+          orderByExpression: TimestamptzOrderByExp
+        - fieldName: endTime
+          orderByExpression: TimestamptzOrderByExp
+        - fieldName: id
+          orderByExpression: Int32OrderByExp
+        - fieldName: name
+          orderByExpression: String1OrderByExp
+        - fieldName: parentSpanId
+          orderByExpression: String1OrderByExp
+        - fieldName: spanId
+          orderByExpression: String1OrderByExp
+        - fieldName: startTime
+          orderByExpression: TimestamptzOrderByExp
+        - fieldName: traceId
+          orderByExpression: String1OrderByExp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: OtelTracesOrderByExp
+
+---
+kind: Model
+version: v2
+definition:
+  name: OtelTraces
+  objectType: OtelTraces
+  source:
+    dataConnectorName: my_pg
+    collection: otel_traces
+  filterExpressionType: OtelTracesBoolExp
+  aggregateExpression: OtelTracesAggExp
+  orderByExpression: OtelTracesOrderByExp
+  graphql:
+    selectMany:
+      queryRootField: otelTraces
+      subscription:
+        rootField: otelTraces
+    selectUniques:
+      - queryRootField: otelTracesById
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: otelTracesById
+    filterInputTypeName: OtelTracesFilterInput
+    aggregate:
+      queryRootField: otelTracesAggregate
+      subscription:
+        rootField: otelTracesAggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: OtelTraces
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

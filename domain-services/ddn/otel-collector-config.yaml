@@ -16,9 +16,17 @@ exporters:
       insecure: true
     headers:
       Content-Type: application/json
+  otlphttp/traces:
+    endpoint: http://otel-api:3000
+    tls:
+      insecure: true
 
 service:
   pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/traces] 
     logs:
       receivers: [otlp]
       processors: [batch]

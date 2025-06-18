@@ -11,3 +11,20 @@ export async function writeLog({ level, message, attributes }) {
     [level, message, JSON.stringify(attributes)]
   );
 }
+
+export async function writeTrace(trace) {
+  await pool.query(
+    `INSERT INTO otel.traces
+     (trace_id, span_id, parent_span_id, name, start_time, end_time, attributes)
+     VALUES ($1, $2, $3, $4, to_timestamp($5::double precision / 1e9), to_timestamp($6::double precision / 1e9), $7)`,
+    [
+      trace.traceId,
+      trace.spanId,
+      trace.parentSpanId,
+      trace.name,
+      trace.startTimeUnixNano,
+      trace.endTimeUnixNano,
+      JSON.stringify(trace.attributes || {})
+    ]
+  );
+}

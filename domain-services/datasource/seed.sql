@@ -674,5 +674,16 @@ CREATE TABLE IF NOT EXISTS otel.logs (
     attributes JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS otel.traces (
+    id SERIAL PRIMARY KEY,
+    trace_id TEXT,
+    span_id TEXT,
+    parent_span_id TEXT,
+    name TEXT,
+    start_time TIMESTAMPTZ,
+    end_time TIMESTAMPTZ,
+    attributes JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
 CREATE DATABASE metadata;

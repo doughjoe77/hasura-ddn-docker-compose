@@ -568,6 +568,52 @@ definition:
               argument_type:
                 name: timestamp
                 type: named
+        timestamptz:
+          representation:
+            type: timestamptz
+          aggregate_functions:
+            max:
+              result_type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+            min:
+              result_type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: custom
+              argument_type:
+                name: timestamptz
+                type: named
+            _gte:
+              type: custom
+              argument_type:
+                name: timestamptz
+                type: named
+            _in:
+              type: in
+            _lt:
+              type: custom
+              argument_type:
+                name: timestamptz
+                type: named
+            _lte:
+              type: custom
+              argument_type:
+                name: timestamptz
+                type: named
+            _neq:
+              type: custom
+              argument_type:
+                name: timestamptz
+                type: named
         uuid:
           representation:
             type: uuid
@@ -783,6 +829,21 @@ definition:
                   name: otel_logs
                   type: named
                 type: array
+        delete_otel_traces_by_id_response:
+          description: Responses from the 'delete_otel_traces_by_id' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: otel_traces
+                  type: named
+                type: array
         delete_products_by_id_response:
           description: Responses from the 'delete_products_by_id' procedure
           fields:
@@ -973,6 +1034,77 @@ definition:
                   name: otel_logs
                   type: named
                 type: array
+        insert_otel_traces_object:
+          fields:
+            attributes:
+              type:
+                type: nullable
+                underlying_type:
+                  name: jsonb
+                  type: named
+            created_at:
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+            end_time:
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+            id:
+              type:
+                type: nullable
+                underlying_type:
+                  name: int4
+                  type: named
+            name:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            parent_span_id:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            span_id:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            start_time:
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+            trace_id:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+        insert_otel_traces_response:
+          description: Responses from the 'insert_otel_traces' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: otel_traces
+                  type: named
+                type: array
         insert_products_object:
           fields:
             id:
@@ -1111,6 +1243,60 @@ definition:
               type:
                 name: text
                 type: named
+        otel_traces:
+          fields:
+            attributes:
+              type:
+                type: nullable
+                underlying_type:
+                  name: jsonb
+                  type: named
+            created_at:
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+            end_time:
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+            id:
+              type:
+                name: int4
+                type: named
+            name:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            parent_span_id:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            span_id:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            start_time:
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+            trace_id:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
         products:
           fields:
             id:
@@ -1303,6 +1489,94 @@ definition:
               type:
                 name: text
                 type: named
+        update_column_otel_traces_attributes:
+          description: Update the 'attributes' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: jsonb
+                  type: named
+        update_column_otel_traces_created_at:
+          description: Update the 'created_at' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+        update_column_otel_traces_end_time:
+          description: Update the 'end_time' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+        update_column_otel_traces_id:
+          description: Update the 'id' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                name: int4
+                type: named
+        update_column_otel_traces_name:
+          description: Update the 'name' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+        update_column_otel_traces_parent_span_id:
+          description: Update the 'parent_span_id' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+        update_column_otel_traces_span_id:
+          description: Update the 'span_id' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+        update_column_otel_traces_start_time:
+          description: Update the 'start_time' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamptz
+                  type: named
+        update_column_otel_traces_trace_id:
+          description: Update the 'trace_id' column in the 'otel_traces' collection
+          fields:
+            _set:
+              description: Set the column to this value
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
         update_column_products_id:
           description: Update the 'id' column in the 'products' collection
           fields:
@@ -1548,6 +1822,87 @@ definition:
                 underlying_type:
                   name: update_column_otel_logs_message
                   type: named
+        update_otel_traces_by_id_response:
+          description: Responses from the 'update_otel_traces_by_id' procedure
+          fields:
+            affected_rows:
+              description: The number of rows affected by the mutation
+              type:
+                name: int4
+                type: named
+            returning:
+              description: Data from rows affected by the mutation
+              type:
+                element_type:
+                  name: otel_traces
+                  type: named
+                type: array
+        update_otel_traces_by_id_update_columns:
+          description: Update the columns of the 'otel_traces' collection
+          fields:
+            attributes:
+              description: Update the 'attributes' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_attributes
+                  type: named
+            created_at:
+              description: Update the 'created_at' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_created_at
+                  type: named
+            end_time:
+              description: Update the 'end_time' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_end_time
+                  type: named
+            id:
+              description: Update the 'id' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_id
+                  type: named
+            name:
+              description: Update the 'name' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_name
+                  type: named
+            parent_span_id:
+              description: Update the 'parent_span_id' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_parent_span_id
+                  type: named
+            span_id:
+              description: Update the 'span_id' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_span_id
+                  type: named
+            start_time:
+              description: Update the 'start_time' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_start_time
+                  type: named
+            trace_id:
+              description: Update the 'trace_id' column in the 'otel_traces' collection.
+              type:
+                type: nullable
+                underlying_type:
+                  name: update_column_otel_traces_trace_id
+                  type: named
         update_products_by_id_response:
           description: Responses from the 'update_products_by_id' procedure
           fields:
@@ -1671,6 +2026,14 @@ definition:
               unique_columns:
                 - id
           foreign_keys: {}
+        - name: otel_traces
+          arguments: {}
+          type: otel_traces
+          uniqueness_constraints:
+            traces_pkey:
+              unique_columns:
+                - id
+          foreign_keys: {}
         - name: products
           arguments: {}
           type: products
@@ -1761,6 +2124,23 @@ definition:
                   type: predicate
           result_type:
             name: delete_otel_logs_by_id_response
+            type: named
+        - name: delete_otel_traces_by_id
+          description: Delete any row on the 'otel_traces' collection using the 'id' key
+          arguments:
+            key_id:
+              type:
+                name: int4
+                type: named
+            pre_check:
+              description: Delete permission predicate over the 'otel_traces' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: otel_traces
+                  type: predicate
+          result_type:
+            name: delete_otel_traces_by_id_response
             type: named
         - name: delete_products_by_id
           description: Delete any row on the 'products' collection using the 'id' key
@@ -1875,6 +2255,25 @@ definition:
                   type: predicate
           result_type:
             name: insert_otel_logs_response
+            type: named
+        - name: insert_otel_traces
+          description: Insert into the otel_traces table
+          arguments:
+            objects:
+              type:
+                element_type:
+                  name: insert_otel_traces_object
+                  type: named
+                type: array
+            post_check:
+              description: Insert permission predicate over the 'otel_traces' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: otel_traces
+                  type: predicate
+          result_type:
+            name: insert_otel_traces_response
             type: named
         - name: insert_products
           description: Insert into the products table
@@ -2025,6 +2424,34 @@ definition:
                 type: named
           result_type:
             name: update_otel_logs_by_id_response
+            type: named
+        - name: update_otel_traces_by_id
+          description: Update any row on the 'otel_traces' collection using the 'id' key
+          arguments:
+            key_id:
+              type:
+                name: int4
+                type: named
+            post_check:
+              description: Update permission post-condition predicate over the 'otel_traces' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: otel_traces
+                  type: predicate
+            pre_check:
+              description: Update permission pre-condition predicate over the 'otel_traces' collection
+              type:
+                type: nullable
+                underlying_type:
+                  object_type_name: otel_traces
+                  type: predicate
+            update_columns:
+              type:
+                name: update_otel_traces_by_id_update_columns
+                type: named
+          result_type:
+            name: update_otel_traces_by_id_response
             type: named
         - name: update_products_by_id
           description: Update any row on the 'products' collection using the 'id' key
