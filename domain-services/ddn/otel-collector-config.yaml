@@ -20,6 +20,8 @@ exporters:
     endpoint: http://otel-api:3000
     tls:
       insecure: true
+    # headers:
+    #   Content-Type: application/json
 
 service:
   pipelines:

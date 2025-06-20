@@ -39,6 +39,7 @@ app.post('/log', async (req, res) => {
 
 app.post(['/traces', '/v1/traces'], express.json({ limit: '5mb' }), async (req, res) => {
 
+  console.log(`📥 Received message headers ${JSON.stringify(req.headers)}`);
   console.log(`📥 Received message body ${JSON.stringify(req.body)}`);
   
   try {
