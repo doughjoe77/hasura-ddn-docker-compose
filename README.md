@@ -7,7 +7,6 @@ Project for running an example Haura project both fully locally and in a hybrid 
   - [Local Host](http://localhost:3280/) - run 100% from your local host, you will be able to explore, write, and run GraphQL queries
   - [Using the Hasura "Local" Web Console](https://console.hasura.io/local/graphql) - this will launch you into the Hasura website and give you the same functionality as the "Local Host" with some additional functionality, you will need to Authenticate to use this feature, please use a GMAIL account to authenticate. If you want to edit Hasura Metadata in a UI versus using the YAML only approach (add new permissions, database objects, connections, etc.) I have included a [Hasura 2.0](http://localhost:8080) engine to do this editing in a graphical format. There are instructions in this document further down on how to take the metadata generated and convert that over to Hasura DDN compliant YAML. When you login to the Hasura 2.0 console the password is `123456`.
 - To access a SQL Editor for Postgres, you can click on the [PG Admin](http://localhost:8889/browser/) link. When you login the database connection is already setup, and the password is `postgres`.
-- The original project I used as a base, https://github.com/hasura/ddn-examples, had all the logs going from the Open Telemetry (OTEL) collector to an endpoint on Hasura.io. My org would not allow that as we need to be HIPAA compliant, so instead I've built my own Open Telemetry API that is storing logs and traces in the Postgres DB, which can be queried by using Hasura or PG Admin. **NOTE**: this is still a WIP and logs are currently not fully being captured in Postgres...
 
 # JWT Authentication to Hasura
 Hasura is authenticated to using JSON Web Tokens (JWT), in this project is a minimal OAuth IDP that supports a client credential flow for obtaining JWTs to authenticate and be authorized to the Hasura Graph. The script `.\get-jwt.ps1` can retrieve a JWT for two different clients (hasura-admin and user-john-doe). To expand to add more users or claims, you can modify the `.\idp\clients.json` file and then run `.\scorched-earth.ps1` to rebuild the container image from scratch.
@@ -18,6 +17,37 @@ Hasura is authenticated to using JSON Web Tokens (JWT), in this project is a min
 To use the JWT in your GraphQL Query from the [local GraphiQL UI](http://localhost:3280/), paste it in the "Headers" tab like the image below using the format "Authorization": "Bearer |jwt from clipboard|":
 
 ![GraphiQL using  JWT](./img/using-jwt-in-graphiql.png)
+
+# Logs
+By default, Hasura DDN tries to log to Hasura OLTP API endpoint hosted at hasura.io. I work in a org heavy with PII, and locally we didn’t want to send logs to Hasura. Instead, we wrote a custom OTEL API that will take the logs and store them in the `otel` schema in our Postgres DB running in Docker. If you are running your GraphiQL instance as Admin, you can pull the logs using a query similar to what is below:
+```gql
+# query last 10 graphql queries
+query MyQuery {
+  otelTraces(
+    where: {name: {_eq: "execute_query"}}
+    limit: 10
+    order_by: {createdAt: Desc}
+  ) {
+    createdAt
+    name
+    attributes
+  }
+}
+```
+Alternately, you can query the DB via [PG Admin](http://localhost:8889/browser/), here are some sample queries:
+```sql
+-- last 10 queries
+select created_at, traces.attributes from otel.traces 
+where traces.attributes @> '{"operation_name": "MyQuery"}'
+  and name = 'execute_query'
+limit 10
+order by created_at desc;
+-- counts of all the different types of logs captures
+select count(*), name 
+from otel.traces 
+group by name 
+order by name;
+```
 
 # Running in Kubernetes
 Still a WIP, but I'm building out a set of scripts to run on Docker Desktop's local Kubernetes instance.  To run that script please execute the file `start-k8ts.ps1`, to destroy everything you have running in Kubernetes for this project, run the command `scorched-earth-k8ts.ps1`. Currently only part of the "datasource" comes up and is inaccessible locally at the moment (still a work-in-progress).

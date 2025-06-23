@@ -78,12 +78,10 @@ services:
     build: ../../otel-api
     restart: always
     ports:
-      # - 4318:4317
       - 4318:4318
     depends_on:
       - postgres
     environment:
-      # PORT: 3000
       POSTGRES_URL: postgres://postgres:postgres@postgres:5432/postgres
       LOG_LEVEL: DEBUG # WARNING INFO
 
