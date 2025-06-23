@@ -19,7 +19,7 @@ To use the JWT in your GraphQL Query from the [local GraphiQL UI](http://localho
 ![GraphiQL using  JWT](./img/using-jwt-in-graphiql.png)
 
 # Logs
-By default, Hasura DDN tries to log to Hasura OLTP API endpoint hosted at hasura.io. I work in a org heavy with PII, and locally we didn’t want to send logs to Hasura. Instead, we wrote a custom OTEL API that will take the logs and store them in the `otel` schema in our Postgres DB running in Docker. If you are running your GraphiQL instance as Admin, you can pull the logs using a query similar to what is below:
+By default, Hasura DDN tries to log to Hasura OLTP API endpoint hosted at hasura.io. I work in a HIPPA compliant org, and locally we didn’t want to send logs to Hasura. Instead, we wrote a custom OTEL API that will take the logs and store them in the `otel` schema in our Postgres DB running in Docker. If you are running your GraphiQL instance as Admin, you can pull the logs using a query like what is below:
 ```gql
 # query last 10 graphql queries
 query MyQuery {
