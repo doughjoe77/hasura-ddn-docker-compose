@@ -7,29 +7,36 @@ receivers:
         endpoint: 0.0.0.0:4318
 
 processors:
-  batch: {}
+  batch:
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 400
+    spike_limit_mib: 100
 
 exporters:
-  otlphttp:
-    endpoint: http://otel-api:3000/log
+  otlp/traces:
+    endpoint: otel-api:4317
     tls:
       insecure: true
-    headers:
-      Content-Type: application/json
-  otlphttp/traces:
-    endpoint: http://otel-api:3000
+
+  otlp/logs:
+    endpoint: otel-api:4317
     tls:
       insecure: true
-    # headers:
-    #   Content-Type: application/json
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
 
 service:
+  extensions: [health_check]
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlphttp/traces] 
+      processors: [memory_limiter, batch]
+      exporters: [otlp/traces]
+
     logs:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlphttp]
+      processors: [memory_limiter, batch]
+      exporters: [otlp/logs]

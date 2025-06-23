@@ -76,14 +76,16 @@ services:
   otel-api:
     container_name: otel-api
     build: ../../otel-api
+    restart: always
     ports:
-      - "3010:3000"
+      # - 4318:4317
+      - 4318:4318
     depends_on:
       - postgres
     environment:
-      PORT: 3000
+      # PORT: 3000
       POSTGRES_URL: postgres://postgres:postgres@postgres:5432/postgres
-      TRACE_VERBOSE: "true"
+      LOG_LEVEL: DEBUG # WARNING INFO
 
 networks:
   default:
