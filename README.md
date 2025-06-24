@@ -41,8 +41,8 @@ Alternately, you can query the DB via [PG Admin](http://localhost:8889/browser/)
 select created_at, traces.attributes from otel.traces 
 where traces.attributes @> '{"operation_name": "MyQuery"}'
   and name = 'execute_query'
-limit 10
-order by created_at desc;
+order by created_at desc
+limit 10;
 -- counts of all the different types of logs captures
 select count(*), name 
 from otel.traces 
