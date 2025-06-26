@@ -1,19 +1,27 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bookworm
 
 # Set working directory
 WORKDIR /app
 
-# System dependencies (for grpc_tools, psycopg2)
-RUN apt-get update && apt-get install -y gcc build-essential && rm -rf /var/lib/apt/lists/*
+# Install required system packages for gRPC and psycopg2-binary
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        libpq-dev \
+        build-essential \
+        curl && \
+    apt-get upgrade -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy source code and protos
+# Copy source code and requirements
 COPY . .
 
-# Compile .proto files into Python
+# Upgrade pip and install Python packages
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Compile .proto files
 RUN python -m grpc_tools.protoc \
     -I./proto \
     --python_out=. \
@@ -27,11 +35,14 @@ RUN python -m grpc_tools.protoc \
     proto/opentelemetry/proto/google/protobuf/timestamp.proto \
     proto/opentelemetry/proto/google/protobuf/any.proto
 
-# Add __init__.py files to enable imports
+# Add __init__.py for proto packages
 RUN find opentelemetry -type d -exec touch {}/__init__.py \;
+
+# Set runtime environment
+ENV LOG_LEVEL=INFO
 
 # Expose gRPC port
 EXPOSE 4317
 
-# Start the API
+# Launch the OTLP API
 CMD ["python", "otel_api.py"]

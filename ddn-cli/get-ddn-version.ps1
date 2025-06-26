@@ -1,0 +1,1 @@
+docker run --rm hasura-ddn-cli version
