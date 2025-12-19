@@ -1,3 +1,5 @@
+- "!include otel_logs.yaml"
+- "!include otel_traces.yaml"
 - "!include public_customers.yaml"
 - "!include public_order_items.yaml"
 - "!include public_orders.yaml"

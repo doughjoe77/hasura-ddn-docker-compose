@@ -1,0 +1,3 @@
+table:
+  name: traces
+  schema: otel
