@@ -1,34 +1,53 @@
 # Overview
-Example project for running a Hasura GraphQL engine with all services running on your local workstation in Docker. In the future, it will also feature how you can take Hasura 2.0 compliant YAML and convert that to Hasura DDN (or vice-versa) compliant YAML for any one-to-one feature matches.
+Example project for running a Hasura GraphQL engine with all services running on your local workstation in Docker to compare running Hasura DDN against running Hasura 2.0. Both GraphQL engines will be running at the same time on the same database to showcase the differences.
+
 # Running the local project
-- for the first time you run the project please run the `.\start.ps1`, if you want to stop all the containers, but keep the volumes intact run the `.\stop.ps1`. To wipe everything out and start from scratch, run the `.\scorched-earth.ps1` command, if you want to re-run it all after doing that, you'll need to run the `.\start.ps1` command again. If you want to use Hasura 2.0, run the `.\hasura20\load-metadata.ps1` command after running `.\start.ps1` to load it with metadata.
-- you have two options to view your GraphiQL UI
+For the first time you run the project please run the `.\start.ps1`. If you want to stop all the containers, but keep the volumes intact run the `.\stop.ps1`. To wipe everything out and start from scratch, run the `.\scorched-earth.ps1` command, if you want to re-run it all after doing that, you'll need to run the `.\start.ps1` command again. 
+
+# Hasura DDN
+Hasura DDN is the latest version of the Hasura engine.
+- You have two options to view your GraphiQL UI
   - [Local Host](http://localhost:3280/) - run 100% from your local host, you will be able to explore, write, and run GraphQL queries
   - [Using the Hasura "Local" Web Console](https://console.hasura.io/local/graphql) - this will launch you into the Hasura website and give you GraphiQL UI plus a few extra features. If you want to edit Hasura Metadata in a UI versus using the YAML only approach (add new permissions, database objects, connections, etc.) I have included a [Hasura 2.0](http://localhost:8080) engine, this has helped me model changes before applying them in Hasura DDN, password for Hasura 2.0’s Console is `123456`.
 - To access a SQL Editor for Postgres, you can click on the [PG Admin](http://localhost:8889/browser/) link. To login into PG Admin, the user is `user@user.com`, and the password is `test123`. When you login the database connection is already setup, and the password is `postgres`.
+**NOTE**: When running either GraphIQl UI, you will need to use a JWT to authenticate for Hasura DDN, this is added as an "Authorization" header, and details of of how to get a JWT are in the next section.
 
 # JWT Authentication to Hasura
 Hasura is authenticated to using JSON Web Tokens (JWT), in this project is a minimal OAuth IDP that supports a client credential flow for obtaining JWTs to authenticate and be authorized to the Hasura Graph. The script `.\get-jwt.ps1` can retrieve a JWT for two different clients (hasura-admin and user-john-doe). To expand to add more users or claims, you can modify the `.\idp\clients.json` file and then run `.\scorched-earth.ps1` and `start.ps1` to rebuild the container image from scratch. JWTs are timebound and expire in an hour, so you may need to get a new JWT if it expires while you are testing.
 - Token Endpoint - http://localhost:3000/token
 - Well Known Config - http://localhost:3000/.well-known/openid-configuration
 - JWK - http://localhost:3000/.well-known/jwks.json
-
 To use the JWT in your GraphQL Query from the [local GraphiQL UI](http://localhost:3280/), paste it in the "Headers" tab like the image below using the format "Authorization": "Bearer |jwt from clipboard|":
 
 ![GraphiQL using  JWT](./img/using-jwt-in-graphiql.png)
 
 **NOTE**: The IDP used here is ***only*** for local development, as it uses the HS256 algorithm and a shared secret, instead of private secret to sign the JWT, and a public secret to validate it. This is fine when working in a local environment, but it should never be used as a production Identity Provider.
 
+# Hasura 2.0 running in parallel with Hasura DDN
+This project also loads Hasura 2.0 so you can view and compare the two products together (especially handy if you are moving from Hasura 2.0 to DDN). While Hasura 2.0 is up and running, you need to, at a minimum, run the script `.\hasura20\load-metadata.ps1` so all the correct metadata will be available when you access it. To access it you need to go to http://localhost:8080 and the admin password locally is `123456`. Hasura 2.0 is also using JWT authentication leveraging the local IDP, so if you are not running as an admin you will need an Authorization header and a Bearer token (you can get a token by running the script `.\get-jwt.ps1`)
+- `.\hasura20\load-metadata.ps1` - script will load 2.0 metadata contained in the `./hasura20/metadata` directory into the Hasura 2.0 instance running locally at http://localhost:8080, if you are running the project for the first time and want to load the Hasura 2.0 instance with metadata, run this command ***AFTER*** running `.\start.ps1`
+- `.\hasura20\export-metadata.ps1` - script exports the current 2.0 metadata into a YAML files structure found under ./hasura20/metadata
+<!-- - `.\hasura20\convert20-to-ddn.ps1` - script will take the 2.0 metadata and convert it to Hasura DDN metadata where the feature parity is a one-to-one match; ***THIS IS A Work-in-progress currently***
+- `.\hasura20\convertddn-to-20.ps1` - script will take the ddn metadata and convert it to Hasura 2.0 metadata where the feature parity is a one-to-one match; ***THIS IS A Work-in-progress currently*** -->
+
 # Logs
-Hasura DDN logs to an Open Telemetry API endpoint. To accommodate this, I’ve written a custom OTEL API that will take the logs and store them in the `otel` schema in the Postgres DB running in Docker. If you are running your GraphiQL instance as Admin, you can pull the logs using a GraphQL query like what is below:
+Hasura DDN logs to an Open Telemetry API endpoint. To accommodate this, I’ve written a custom OTEL API that will take the logs and store them in the `otel` schema in the Postgres DB running in Docker. If you are running your Hasura DDN GraphiQL instance as Admin, you can pull the logs using a GraphQL query like what is below:
 ```gql
-# query last 10 graphql queries
+# query last 10 graphql queries in Hasura DDN
 query MyQuery {
   otelTraces(
     where: {name: {_eq: "execute_query"}}
     limit: 10
     order_by: {createdAt: Desc}
   ) {
+    createdAt
+    name
+    attributes
+  }
+}
+# same query in Hasura 2.0
+query MyQuery {
+  otelTraces(orderBy: {createdAt: DESC}, limit: 10, where: {name: {_eq: "execute_query"}}) {
     createdAt
     name
     attributes
@@ -48,6 +67,10 @@ select count(*), name
 from otel.traces 
 group by name 
 order by name;
+-- find a specific GraphQL query by name
+SELECT *
+FROM otel.traces 
+WHERE attributes ->> 'display.name' = 'Execute CustomersDDNQuery';
 ```
 # Hasura DDN Helper Scripts
 It sometimes takes ALOT of DDN commands to execute a task, we've created some wrapper PowerShell scripts to assist with those items and to cut down on developer time / knowledge
@@ -125,14 +148,10 @@ query QueryHasura20CustomerCount {
 
 # Running in Kubernetes
 Still a WIP, but I'm building out a set of scripts to run on Docker Desktop's local Kubernetes instance.  To run that script please execute the file `start-k8ts.ps1`, to destroy everything you have running in Kubernetes for this project, run the command `scorched-earth-k8ts.ps1`. Currently only part of the "datasource" comes up and is inaccessible locally at the moment (still a work-in-progress).
-
-# Using Hasura 2.0 to develop for Hasura DDN
-While Hasura 2.0 has a robust UI for development (adding connectors, database objects, authorization, actions, remote schemas, etc.); Hasura DDN **ONLY** has an option for using YAML files to do the same type of work, additionally DDN has a VS Code plug-in. Due to that, this project loads both Hasura 2.0 AND Hasura DDN and in the future will allow you to develop in 2.0 for DDN by exporting the 2.0 YAML files and converting them to DDN compliant YAML files. The following scripts are used to make this happen leveraging the Hasura 2.0 CLI:
-- `.\hasura20\load-metadata.ps1` - script will load 2.0 metadata contained in the `./hasura20/metadata` directory into the Hasura 2.0 instance running locally at http://localhost:8080, if you are running the project for the first time and want to load the Hasura 2.0 instance with metadata, run this command ***AFTER*** running `.\start.ps1`
-- `.\hasura20\export-metadata.ps1` - script exports the current 2.0 metadata into a YAML files structure found under ./hasura20/metadata
-- `.\hasura20\convert20-to-ddn.ps1` - script will take the 2.0 metadata and convert it to Hasura DDN metadata where the feature parity is a one-to-one match; ***THIS IS A Work-in-progress currently***
-- `.\hasura20\convertddn-to-20.ps1` - script will take the ddn metadata and convert it to Hasura 2.0 metadata where the feature parity is a one-to-one match; ***THIS IS A Work-in-progress currently***
 -->
+
+
+
 # Training and Informational Links
 - [Local Development Examples with different DBs](https://github.com/hasura/ddn-examples/blob/main/README.md)
 - [DDN CLI Installation](https://hasura.io/docs/3.0/reference/cli/installation/) - **REQUIRED** for Hasura DDV Development
